@@ -12,4 +12,10 @@ public class Index {
     public String index(Model model){
         return "index";
     }
+
+    @RequestMapping("/canvas")
+    public String canvas(Model model)
+    {
+        return "canvas";
+    }
 }
