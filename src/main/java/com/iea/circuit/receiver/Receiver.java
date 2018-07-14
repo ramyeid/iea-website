@@ -1,9 +1,3 @@
-/**
- *  Copyright Murex S.A.S., 2003-2018. All Rights Reserved.
- *
- *  This software program is proprietary and confidential to Murex S.A.S and its affiliates ("Murex") and, without limiting the generality of the foregoing reservation of rights, shall not be accessed, used, reproduced or distributed without the
- *  express prior written consent of Murex and subject to the applicable Murex licensing terms. Any modification or removal of this copyright notice is expressly prohibited.
- */
 package com.iea.circuit.receiver;
 
 import java.util.Objects;
@@ -14,24 +8,13 @@ import com.iea.circuit.pin.Pin;
 
 public abstract class Receiver extends Component {
 
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Instance fields
-    //~ ----------------------------------------------------------------------------------------------------------------
+    private final ReceiverConfiguration receiverConfiguration;
 
-    private final Configuration configuration;
-
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Constructors
-    //~ ----------------------------------------------------------------------------------------------------------------
-
-    Receiver(String id, Configuration configuration, Pin firstPin, Pin secondPin) {
+    Receiver(String id, ReceiverConfiguration receiverConfiguration, Pin firstPin, Pin secondPin) {
         super(id, firstPin, secondPin);
-        this.configuration = configuration;
-    }
+        this.receiverConfiguration = receiverConfiguration;
 
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Methods
-    //~ ----------------------------------------------------------------------------------------------------------------
+    }
 
     public abstract ReceiverStatus retrieveStatus(double amper, double volt);
 
@@ -41,12 +24,11 @@ public abstract class Receiver extends Component {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Receiver receiver = (Receiver) o;
-        return Objects.equals(configuration, receiver.configuration);
+        return Objects.equals(receiverConfiguration, receiver.receiverConfiguration);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(super.hashCode(), configuration);
+        return Objects.hash(super.hashCode(), receiverConfiguration);
     }
 }

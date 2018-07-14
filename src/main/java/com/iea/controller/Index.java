@@ -1,6 +1,7 @@
 package com.iea.controller;
 
-import org.springframework.http.ResponseEntity;
+import com.iea.circuit.Circuit;
+import com.iea.serializer.Serializer;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,10 @@ public class Index {
     }
 
     @PostMapping("/canvas/update")
-    public void canvasUpdate(@RequestParam("components") String components, @RequestParam("connections") String connections) {
-        System.out.println(components);
-        System.out.println(connections);
+    public void canvasUpdate(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections) {
+        Circuit userCircuit;
+
+        userCircuit = Serializer.serialize(generators, receivers, connections);
+
     }
 }

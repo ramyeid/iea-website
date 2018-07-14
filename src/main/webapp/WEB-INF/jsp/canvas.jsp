@@ -13,7 +13,7 @@
   <div id="main" style=" height : 80%; width:80%;">
       <img id = "rpi" src='img/rpi.png'/>
   </div>
-  <div id="components" style="position: absolute; left: 80%; top: 0; width: 20%;">
+  <div id="components" style="position: absolute; left: 79%; top: 0; width: 20%;">
     <table border='2'>
       <tr>
         <th colspan='2'>

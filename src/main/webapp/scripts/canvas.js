@@ -3,7 +3,8 @@ let counter = 0;
 
 //array containing linked components' IDs
 let wiringList = [];
-let componentList = [];
+let receiverList = [];
+let generatorList = [];
 let wiring = false;
 let wiringTarget = null;
 
@@ -50,7 +51,10 @@ function clickedComponent(event)
 
 	newComponent = caller.cloneNode();
 	newComponent.id = caller.id + '-' + counter++;
-	componentList.push(newComponent.id);
+    if (caller.id == "bat")
+        generatorList.push(newComponent.id);
+    else
+    	receiverList.push(newComponent.id);
 
 	//add events to the clones
 	//mouse down for dragging components
@@ -58,17 +62,14 @@ function clickedComponent(event)
     //right click for deleting components
 	newComponent.addEventListener("contextmenu", deleteComponent);
 	newComponent.ondragstart = function() {return false;}; //disable default drag event
+
     newComponent.style.position = 'absolute';
-    newComponent.style.zIndex = 1000; //place dragged object on top of screen
+    newComponent.style.zIndex = 1000; //place object on top of screen
 	document.body.append(newComponent); //add cloned component to body
 };
 
-//function called on right click to delete component
-function deleteComponent(event)
+function clearRelatedWiring(caller)
 {
-	event.preventDefault(); //prevents default context menu from opening
-    if (wiring) return; //prevent deletion if currently wiring
-    caller = event.target;
     for(var i=0; i<wiringList.length;i++)
     {
       if (wiringList[i][0][0] == caller.id || wiringList[i][1][0] == caller.id)
@@ -82,8 +83,21 @@ function deleteComponent(event)
       if (wiringList[i].length == 0)
         wiringList.splice(i,1);
     }
+}
 
-    componentList.splice(componentList.indexOf(caller.id),1);
+//function called on right click to delete component
+function deleteComponent(event)
+{
+	event.preventDefault(); //prevents default context menu from opening
+    if (wiring) return; //prevent deletion if currently wiring
+    caller = event.target;
+    clearRelatedWiring(caller);
+
+    if (caller.id.substring(0,3) == "bat")
+        generatorList.splice(generatorList.indexOf(caller.id),1);
+    else
+        receiverList.splice(receiverList.indexOf(caller.id),1);
+
 	event.target.remove(); //deletes component
 }
 
@@ -107,7 +121,7 @@ function moveComponent(event) {
 	        wiringTarget = [caller.id,pin];
 	        return false;
 	    }
-	    else if (wiringTarget == caller)
+	    else if (wiringTarget[0] == caller.id)
 	    {
 	        return false;
 	    }
@@ -153,12 +167,13 @@ function moveComponent(event) {
 
 submitbutton.onclick = function(){
     let connectionsString = wiringList.toString();
-    let componentString = componentList.toString();
+    let receiversString = receiverList.toString();
+    let generatorsString = generatorList.toString();
 
     $.ajax({
          type: 'POST',
          url: "/canvas/update",
-         data: { components: componentString, connections: connectionsString} });
+         data: { generators: generatorsString, receivers: receiversString, connections: connectionsString} });
 
-    textlabel.innerHTML = 'Components: ' + componentString + ' ||| Connections: ' + connectionsString;
+    textlabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
 };

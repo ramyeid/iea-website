@@ -6,11 +6,11 @@ import com.iea.circuit.pin.PinFactory;
 
 public class DipoleReceiver extends Receiver {
 
-    public DipoleReceiver(String id, Configuration configuration) {
+    public DipoleReceiver(String id, ReceiverConfiguration configuration) {
         super(id, configuration, PinFactory.createPositivePin(), PinFactory.createNegativePin());
     }
 
-    public Pin getPositionPin() {
+    public Pin getPositivePin() {
         return getFirstPin();
     }
 

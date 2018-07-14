@@ -6,7 +6,7 @@ public class ReceiverFactory {
     //~ Methods
     //~ ----------------------------------------------------------------------------------------------------------------
 
-    public DipoleReceiver createDipoleReceiver(String id, Configuration configuration) {
-        return new DipoleReceiver(id, configuration);
+    public DipoleReceiver createDipoleReceiver(String id, ReceiverConfiguration receiverConfiguration) {
+        return new DipoleReceiver(id, receiverConfiguration);
     }
 }
