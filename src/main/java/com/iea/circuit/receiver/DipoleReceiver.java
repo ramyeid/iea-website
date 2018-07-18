@@ -9,8 +9,8 @@ public class DipoleReceiver extends Receiver {
     private final Pin positivePin;
     private final Pin negativePin;
 
-    public DipoleReceiver(String id, double optimalAmper, double minVolt, double maxVolt, double resistance, Pin positivePin, Pin negativePin) {
-        super(id, optimalAmper, minVolt, maxVolt, resistance);
+    public DipoleReceiver(String id, Configuration configuration, Pin positivePin, Pin negativePin) {
+        super(id, configuration);
         this.positivePin = positivePin;
         this.negativePin = negativePin;
     }
