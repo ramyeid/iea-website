@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/")
 public class Index {
-
     @RequestMapping
     public String index(Model model) {
         return "index";
@@ -22,8 +21,8 @@ public class Index {
     }
 
     @PostMapping("/canvas/update")
-    public void canvasUpdate(@RequestParam("name") String name, @RequestParam("connections") String connections) {
-        // logic goes here
+    public void canvasUpdate(@RequestParam("components") String components, @RequestParam("connections") String connections) {
+        System.out.println(components);
         System.out.println(connections);
     }
 }

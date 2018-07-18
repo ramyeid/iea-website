@@ -31,7 +31,22 @@ public class Configuration {
         this.resistance = resistance;
     }
 
-    //~ ----------------------------------------------------------------------------------------------------------------
+    public double getOptimalAmper() {
+        return optimalAmper;
+    }
+
+    public double getMinVolt() {
+        return minVolt;
+    }
+
+    public double getMaxVolt() {
+        return maxVolt;
+    }
+
+    public double getResistance() {
+        return resistance;
+    }
+//~ ----------------------------------------------------------------------------------------------------------------
     //~ Methods
     //~ ----------------------------------------------------------------------------------------------------------------
 

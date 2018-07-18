@@ -48,6 +48,7 @@
 <footer style=" position:absolute; bottom:0; width:100%; height:10%; background:#6cf;">
   <div  id="Submit">
     <input type="button" id="submitbutton" value="Submit">
+    <label id="textlabel"></label>
   </div>
 </footer>
 <script src="scripts/canvas.js" ></script>

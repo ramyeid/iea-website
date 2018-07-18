@@ -7,9 +7,23 @@ let componentList = [];
 let wiring = false;
 let wiringTarget = null;
 
+let textlabel =  document.getElementById('textlabel');
+
 let components = document.getElementById("components");
 //bind click event to adding components from "components" div in .JSP
 components.addEventListener("click", clickedComponent);
+
+function checkDipolePin(object, clickx)
+{
+    if (clickx > object.width/2)
+    {
+        return "+";
+    }
+    else
+    {
+        return "-";
+    }
+}
 
 //function called on clicking a component
 function clickedComponent(event)
@@ -44,7 +58,8 @@ function clickedComponent(event)
     //right click for deleting components
 	newComponent.addEventListener("contextmenu", deleteComponent);
 	newComponent.ondragstart = function() {return false;}; //disable default drag event
-	newComponent.l
+    newComponent.style.position = 'absolute';
+    newComponent.style.zIndex = 1000; //place dragged object on top of screen
 	document.body.append(newComponent); //add cloned component to body
 };
 
@@ -52,10 +67,11 @@ function clickedComponent(event)
 function deleteComponent(event)
 {
 	event.preventDefault(); //prevents default context menu from opening
+    if (wiring) return; //prevent deletion if currently wiring
     caller = event.target;
     for(var i=0; i<wiringList.length;i++)
     {
-      if (wiringList[i][0] == caller.id || wiringList[i][1] == caller.id)
+      if (wiringList[i][0][0] == caller.id || wiringList[i][1][0] == caller.id)
       {
         wiringList[i].length = 0;
       }
@@ -66,21 +82,29 @@ function deleteComponent(event)
       if (wiringList[i].length == 0)
         wiringList.splice(i,1);
     }
+
+    componentList.splice(componentList.indexOf(caller.id),1);
 	event.target.remove(); //deletes component
 }
 
 //function used to move component on drag
 function moveComponent(event) {
+
   if (event.which != 1) //if not left click, ignore
 	return false;
 
   caller = event.target;
 
+  //record initial click offset from object edge for smoother dragging
+  let shiftX = event.clientX - caller.getBoundingClientRect().left;
+  let shiftY = event.clientY - caller.getBoundingClientRect().top;
+
   if (wiring)
 	{
 	    if (wiringTarget == null)
 	    {
-	        wiringTarget = caller;
+	        let pin = checkDipolePin(caller, shiftX);
+	        wiringTarget = [caller.id,pin];
 	        return false;
 	    }
 	    else if (wiringTarget == caller)
@@ -89,19 +113,16 @@ function moveComponent(event) {
 	    }
 	    else
 	    {
-	        let connection = [wiringTarget.id, caller.id];
+	        let pin = checkDipolePin(caller, shiftX);
+	        let connection = [wiringTarget, [caller.id,pin]];
 	        wiringList.push(connection);
-	        alert("connected:" + wiringTarget.id + " to " + caller.id);
+            textlabel.innerHTML = "new connection:" + connection;
 	        wiring = false;
 	        wiringTarget = null;
 	        document.body.style.cursor = 'auto';
 	        return true;
 	    }
 	}
-
-  //record initial click offset from object edge for smoother dragging
-  let shiftX = event.clientX - caller.getBoundingClientRect().left;
-  let shiftY = event.clientY - caller.getBoundingClientRect().top;
 
   caller.style.position = 'absolute';
   caller.style.zIndex = 1000; //place dragged object on top of screen
@@ -131,13 +152,13 @@ function moveComponent(event) {
 }
 
 submitbutton.onclick = function(){
+    let connectionsString = wiringList.toString();
+    let componentString = componentList.toString();
 
-let connectionsString = wiringList.toString();
+    $.ajax({
+         type: 'POST',
+         url: "/canvas/update",
+         data: { components: componentString, connections: connectionsString} });
 
-$.ajax({
-     type: 'POST',
-     url: "/canvas/update",
-     data: { name: "maincircuit", connections: connectionsString} });
-
-alert("Circuit Updated!");
+    textlabel.innerHTML = 'Components: ' + componentString + ' ||| Connections: ' + connectionsString;
 };
