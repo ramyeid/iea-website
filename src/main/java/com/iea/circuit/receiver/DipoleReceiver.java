@@ -13,6 +13,7 @@ public class DipoleReceiver extends Receiver {
         super(id, configuration);
         this.positivePin = positivePin;
         this.negativePin = negativePin;
+
     }
 
     public Pin getPositivePin() {
