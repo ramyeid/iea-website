@@ -1,14 +1,15 @@
 package com.iea.circuit;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
 import com.iea.circuit.receiver.Receiver;
 import com.iea.utils.Tuple;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 public class Circuit {
 
@@ -18,6 +19,14 @@ public class Circuit {
     public Circuit(Generator generator, List<Receiver> receivers) {
         this.generator = generator;
         this.receivers = receivers;
+    }
+
+    public Generator getGenerator() {
+        return generator;
+    }
+
+    public List<Receiver> getReceivers() {
+        return receivers;
     }
 
     @Override
@@ -33,14 +42,6 @@ public class Circuit {
     @Override
     public int hashCode() {
         return Objects.hash(generator, receivers);
-    }
-
-    public Generator getGenerator() {
-        return generator;
-    }
-
-    public List<Receiver> getReceivers() {
-        return receivers;
     }
 
     public static class Builder {
@@ -73,8 +74,28 @@ public class Circuit {
             return builder;
         }
 
+        public void clearComponents()
+        {
+            builder.receivers = new ArrayList<>();
+            builder.generator = null;
+        }
+        public void setReceivers(List<Receiver> receivers) {
+            this.receivers = receivers;
+        }
+
         public Circuit build() {
             return new Circuit(builder.generator, builder.receivers);
+        }
+
+        public Component getComponentById(final String componentId) {
+            List<Component> components = newArrayList();
+            components.addAll(receivers);
+            components.add(generator);
+            return components.stream()
+                    .filter(component -> component.getId()
+                    .equals(componentId))
+                    .findFirst()
+                    .orElse(null);
         }
     }
 }
