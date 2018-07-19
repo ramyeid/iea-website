@@ -1,46 +1,46 @@
-/**
- *  Copyright Murex S.A.S., 2003-2018. All Rights Reserved.
- *
- *  This software program is proprietary and confidential to Murex S.A.S and its affiliates ("Murex") and, without limiting the generality of the foregoing reservation of rights, shall not be accessed, used, reproduced or distributed without the
- *  express prior written consent of Murex and subject to the applicable Murex licensing terms. Any modification or removal of this copyright notice is expressly prohibited.
- */
 package com.iea.circuit;
+
+import com.iea.circuit.pin.Pin;
 
 import java.util.Objects;
 
 
 public abstract class Component {
 
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Instance fields 
-    //~ ----------------------------------------------------------------------------------------------------------------
-
     private final String id;
+    private final Pin firstPin;
+    private final Pin secondPin;
 
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Constructors 
-    //~ ----------------------------------------------------------------------------------------------------------------
-
-    public Component(String id) {
+    public Component(String id, Pin firstPin, Pin secondPin) {
         this.id = id;
+        this.firstPin = firstPin;
+        this.secondPin = secondPin;
     }
 
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Methods 
-    //~ ----------------------------------------------------------------------------------------------------------------
+    public String getId() {
+        return id;
+    }
+
+    public Pin getFirstPin() {
+        return firstPin;
+    }
+
+    public Pin getSecondPin() {
+        return secondPin;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if ((o == null) || (getClass() != o.getClass()))
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Component component = (Component) o;
-        return Objects.equals(id, component.id);
+        return Objects.equals(id, component.id) &&
+                Objects.equals(firstPin, component.firstPin) &&
+                Objects.equals(secondPin, component.secondPin);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, firstPin, secondPin);
     }
 }
