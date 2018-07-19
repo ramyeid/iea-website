@@ -6,11 +6,10 @@
  */
 package com.iea;
 
-import java.util.List;
-
 import com.iea.circuit.receiver.Receiver;
 import com.iea.circuit.receiver.ReceiverStatus;
-import com.iea.utils.Tuple;
+
+import java.util.Map;
 
 
 public interface PresenterNotifier {
@@ -19,5 +18,7 @@ public interface PresenterNotifier {
     //~ Methods
     //~ ----------------------------------------------------------------------------------------------------------------
 
-    void onResults(List<Tuple<Receiver, ReceiverStatus>> receiverWithStatus);
+    void onResults(Map<Receiver, ReceiverStatus> receiverWithStatus);
+
+    void onError();
 }

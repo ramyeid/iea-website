@@ -34,6 +34,7 @@ public class Circuit {
         this.receivers = receivers;
     }
 
+
     //~ ----------------------------------------------------------------------------------------------------------------
     //~ Methods
     //~ ----------------------------------------------------------------------------------------------------------------
@@ -51,6 +52,14 @@ public class Circuit {
     @Override
     public int hashCode() {
         return Objects.hash(generator, receivers);
+    }
+
+    public Generator getGenerator() {
+        return generator;
+    }
+
+    public List<Receiver> getReceivers() {
+        return receivers;
     }
 
     //~ ----------------------------------------------------------------------------------------------------------------

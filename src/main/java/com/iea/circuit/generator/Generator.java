@@ -22,33 +22,27 @@ public class Generator extends Component {
     private final double maxAmper;
     private final double volt;
 
-    private final Pin positivePin;
-    private final Pin negativePin;
-
     //~ ----------------------------------------------------------------------------------------------------------------
     //~ Constructors
     //~ ----------------------------------------------------------------------------------------------------------------
 
     public Generator(String id, double maxAmper, double volt) {
-        super(id);
+        super(id, PinFactory.createPositivePin(), PinFactory.createNegativePin());
         this.maxAmper = maxAmper;
         this.volt = volt;
-        this.positivePin = PinFactory.createPositivePin();
-        this.negativePin = PinFactory.createNegativePin();
+    }
 
+    public Pin getPositivePin() {
+        return getPositivePin();
+    }
+
+    public Pin getNegativePin() {
+        return getSecondPin();
     }
 
     //~ ----------------------------------------------------------------------------------------------------------------
     //~ Methods
     //~ ----------------------------------------------------------------------------------------------------------------
-
-    public Pin getPositivePin() {
-        return positivePin;
-    }
-
-    public Pin getNegativePin() {
-        return negativePin;
-    }
 
     public double getMaxAmper() {
         return maxAmper;
@@ -60,19 +54,17 @@ public class Generator extends Component {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if ((o == null) || (getClass() != o.getClass()))
-            return false;
-        if (!super.equals(o))
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Generator generator = (Generator) o;
-        return (Double.compare(generator.maxAmper, maxAmper) == 0) && (Double.compare(generator.volt, volt) == 0) && Objects.equals(positivePin, generator.positivePin) && Objects.equals(negativePin, generator.negativePin);
+        return Double.compare(generator.maxAmper, maxAmper) == 0 &&
+                Double.compare(generator.volt, volt) == 0;
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), maxAmper, volt, positivePin, negativePin);
+        return Objects.hash(super.hashCode(), maxAmper, volt);
     }
 }

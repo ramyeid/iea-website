@@ -1,8 +1,8 @@
 /**
- *  Copyright Murex S.A.S., 2003-2018. All Rights Reserved.
- *
- *  This software program is proprietary and confidential to Murex S.A.S and its affiliates ("Murex") and, without limiting the generality of the foregoing reservation of rights, shall not be accessed, used, reproduced or distributed without the
- *  express prior written consent of Murex and subject to the applicable Murex licensing terms. Any modification or removal of this copyright notice is expressly prohibited.
+ * Copyright Murex S.A.S., 2003-2018. All Rights Reserved.
+ * <p>
+ * This software program is proprietary and confidential to Murex S.A.S and its affiliates ("Murex") and, without limiting the generality of the foregoing reservation of rights, shall not be accessed, used, reproduced or distributed without the
+ * express prior written consent of Murex and subject to the applicable Murex licensing terms. Any modification or removal of this copyright notice is expressly prohibited.
  */
 package com.iea.circuit.pin;
 
@@ -20,8 +20,8 @@ public class Pin {
     //~ Enums
     //~ ----------------------------------------------------------------------------------------------------------------
 
-    enum PinType {
-        POSITIVE, NEGATIVE
+    public enum Type {
+        POSITIVE, NEGATIVE, NEUTRAL
     }
 
     //~ ----------------------------------------------------------------------------------------------------------------
@@ -29,15 +29,16 @@ public class Pin {
     //~ ----------------------------------------------------------------------------------------------------------------
 
     private final List<Tuple<Pin, Component>> connections;
-    private final PinType pinType;
+    private final Type type;
+    private boolean checked;
 
     //~ ----------------------------------------------------------------------------------------------------------------
     //~ Constructors
     //~ ----------------------------------------------------------------------------------------------------------------
 
-    Pin(PinType pinType) {
+    Pin(Type type) {
         connections = new ArrayList<>();
-        this.pinType = pinType;
+        this.type = type;
     }
 
     //~ ----------------------------------------------------------------------------------------------------------------
@@ -50,12 +51,20 @@ public class Pin {
 
     }
 
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
     public List<Tuple<Pin, Component>> getConnections() {
         return connections;
     }
 
-    public PinType getPinType() {
-        return pinType;
+    public Type getType() {
+        return type;
     }
 
     @Override
@@ -65,12 +74,12 @@ public class Pin {
         if ((o == null) || (getClass() != o.getClass()))
             return false;
         Pin pin = (Pin) o;
-        return Objects.equals(connections, pin.connections) && (pinType == pin.pinType);
+        return Objects.equals(connections, pin.connections) && (type == pin.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(connections, pinType);
+        return Objects.hash(connections, type);
     }
 
     private void connect(Component component, Pin pin) {
