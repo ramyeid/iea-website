@@ -9,13 +9,11 @@ import java.util.Objects;
 
 public class Generator extends Component {
 
-    private final double maxAmper;
-    private final double volt;
+    private final GeneratorConfiguration generatorConfiguration;
 
-    public Generator(String id, double maxAmper, double volt) {
+    public Generator(String id, GeneratorConfiguration generatorConfiguration) {
         super(id, PinFactory.createPositivePin(), PinFactory.createNegativePin());
-        this.maxAmper = maxAmper;
-        this.volt = volt;
+        this.generatorConfiguration = generatorConfiguration;
     }
 
     public Pin getPositivePin() {
@@ -26,12 +24,8 @@ public class Generator extends Component {
         return getSecondPin();
     }
 
-    public double getMaxAmper() {
-        return maxAmper;
-    }
-
-    public double getVolt() {
-        return volt;
+    public GeneratorConfiguration getGeneratorConfiguration() {
+        return generatorConfiguration;
     }
 
     @Override
@@ -40,12 +34,12 @@ public class Generator extends Component {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Generator generator = (Generator) o;
-        return Double.compare(generator.maxAmper, maxAmper) == 0 &&
-                Double.compare(generator.volt, volt) == 0;
+        return Objects.equals(generatorConfiguration, generator.generatorConfiguration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), maxAmper, volt);
+
+        return Objects.hash(super.hashCode(), generatorConfiguration);
     }
 }
