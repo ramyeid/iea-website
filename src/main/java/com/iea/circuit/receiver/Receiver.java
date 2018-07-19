@@ -9,6 +9,7 @@ package com.iea.circuit.receiver;
 import java.util.Objects;
 
 import com.iea.circuit.Component;
+import com.iea.circuit.pin.Pin;
 
 
 public abstract class Receiver extends Component {
@@ -23,8 +24,8 @@ public abstract class Receiver extends Component {
     //~ Constructors
     //~ ----------------------------------------------------------------------------------------------------------------
 
-    Receiver(String id, Configuration configuration) {
-        super(id);
+    Receiver(String id, Configuration configuration, Pin firstPin, Pin secondPin) {
+        super(id, firstPin, secondPin);
         this.configuration = configuration;
     }
 
@@ -36,12 +37,9 @@ public abstract class Receiver extends Component {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if ((o == null) || (getClass() != o.getClass()))
-            return false;
-        if (!super.equals(o))
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Receiver receiver = (Receiver) o;
         return Objects.equals(configuration, receiver.configuration);
     }

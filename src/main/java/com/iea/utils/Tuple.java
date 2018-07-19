@@ -31,7 +31,6 @@ public class Tuple <T,Z> {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(first, second);
     }
 }
