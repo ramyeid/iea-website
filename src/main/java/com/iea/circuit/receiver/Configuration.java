@@ -25,7 +25,6 @@ public class Configuration {
     //~ ----------------------------------------------------------------------------------------------------------------
 
     public Configuration(double optimalAmper, double minVolt, double maxVolt, double resistance) {
-
         this.optimalAmper = optimalAmper;
         this.minVolt = minVolt;
         this.maxVolt = maxVolt;
