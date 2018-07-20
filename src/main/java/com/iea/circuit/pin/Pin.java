@@ -1,24 +1,12 @@
-/**
-<<<<<<< HEAD
- *  Copyright Murex S.A.S., 2003-2018. All Rights Reserved.
- *
- *  This software program is proprietary and confidential to Murex S.A.S and its affiliates ("Murex") and, without limiting the generality of the foregoing reservation of rights, shall not be accessed, used, reproduced or distributed without the
- *  express prior written consent of Murex and subject to the applicable Murex licensing terms. Any modification or removal of this copyright notice is expressly prohibited.
-=======
- * Copyright Murex S.A.S., 2003-2018. All Rights Reserved.
- * <p>
- * This software program is proprietary and confidential to Murex S.A.S and its affiliates ("Murex") and, without limiting the generality of the foregoing reservation of rights, shall not be accessed, used, reproduced or distributed without the
- * express prior written consent of Murex and subject to the applicable Murex licensing terms. Any modification or removal of this copyright notice is expressly prohibited.
->>>>>>> b44adb4cda296fe76b4c8a245b69d5bac9707fdc
- */
 package com.iea.circuit.pin;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import com.iea.circuit.Component;
 import com.iea.utils.Tuple;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 
 public class Pin {
@@ -39,7 +27,7 @@ public class Pin {
     private final Type type;
 
     Pin(Type type) {
-        connections = new ArrayList<>();
+        connections = newArrayList();
         this.type = type;
     }
 
@@ -51,31 +39,41 @@ public class Pin {
         return type;
     }
 
-    private void connect(Component component, Pin pin) {
-        connections.add(new Tuple<>(pin, component));
+    private void connect(Tuple<Pin, Component> connection) {
+        if (!connections.contains(connection)) {
+            connections.add(connection);
+        }
     }
 
     public static void connectComponents(Tuple<Pin, Component> component, Tuple<Pin, Component> component2) {
-        component.getFirst().connect(component2.getSecond(), component2.getFirst());
-        component2.getFirst().connect(component.getSecond(), component.getFirst());
+        component.getFirst().connect(component2);
+        component2.getFirst().connect(component);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Pin pin = (Pin) o;
+        ArrayList<Tuple<Pin, Component>> connectionsAsList = new ArrayList<>(pin.connections);
         boolean connectionsEquals = true;
-        if (connections.size() != pin.connections.size()) return false;
+        if (connections.size() != pin.connections.size()) {
+            return false;
+        }
         int i=0;
         for (Tuple<Pin,Component> connection : connections){
-            if (!(connection.getFirst().type.equals(pin.connections.get(i).getFirst().type) && connection.getSecond().getId().equals(pin.connections.get(i).getSecond().getId()))){
+            if (!(connection.getFirst().type.equals(connectionsAsList.get(i).getFirst().type) && connection.getSecond().getId().equals(connectionsAsList.get(i).getSecond().getId()))){
                 connectionsEquals=false;
-                break;}
-
+                break;
+            }
             i++;
         }
-                //this.connections.equals(pin.connections) &&
+        //this.connections.equals(pin.connections) &&
         return  connectionsEquals &&
                 type == pin.type;
     }
@@ -90,9 +88,9 @@ public class Pin {
 
         for (Tuple<Pin,Component> connection : this.connections){
             result = 31 * result + (connection.getFirst().type == null ? 0 : connection.getFirst().type.hashCode());
-            result = 31 * result + (connection.getSecond().getId() == null ? 0 : connection.getSecond().getId().hashCode());}
+            result = 31 * result + (connection.getSecond().getId() == null ? 0 : connection.getSecond().getId().hashCode());
+        }
         result = 31 * result + (this.getType() == null ? 0 : this.getType().hashCode());
-
         return result;
     }
 }
