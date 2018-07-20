@@ -19,7 +19,8 @@ public class ComponentTest {
         GeneratorConfiguration generatorConfig0 = new GeneratorConfiguration(40,6);
         Component component0 = new Generator("gen0",generatorConfig0);
         Component component1 = new Generator("gen0",generatorConfig0);
-        assert (component0.equals(component1));
+
+        assertEquals (component0,component1);
     }
 
     @Test
@@ -34,7 +35,8 @@ public class ComponentTest {
         Pin.connectComponents(new Tuple<>(component1.getFirstPin(),component1),new Tuple<>(component2.getSecondPin(),component2));
         Pin.connectComponents(new Tuple<>(component0.getSecondPin(),component0),new Tuple<>(component2.getSecondPin(),component2));
         Pin.connectComponents(new Tuple<>(component1.getSecondPin(),component1),new Tuple<>(component2.getSecondPin(),component2));
-        assert (component0.equals(component1));
+
+        assertEquals (component0,component1);
     }
 
     @Test
@@ -43,7 +45,8 @@ public class ComponentTest {
         GeneratorConfiguration generatorConfig0 = new GeneratorConfiguration(40,6);
         Component component0 = new Generator("gen0",generatorConfig0);
         Component component1 = new Generator("gen1",generatorConfig0);
-        assert !(component0.equals(component1));
+
+        assertNotEquals(component0,component1);
     }
 
     @Test
@@ -53,7 +56,8 @@ public class ComponentTest {
         GeneratorConfiguration generatorConfig1 = new GeneratorConfiguration(20,3);
         Component component0 = new Generator("gen0",generatorConfig0);
         Component component1 = new Generator("gen0",generatorConfig1);
-        assert !(component0.equals(component1));
+
+        assertNotEquals(component0,component1);
     }
 
     @Test
@@ -65,7 +69,8 @@ public class ComponentTest {
         Component component1 = new Generator("gen0",generatorConfig0);
         Component component2 = new DipoleReceiver("rec0",receiverConfig0);
         Pin.connectComponents(new Tuple<>(component0.getFirstPin(),component0),new Tuple<>(component2.getSecondPin(),component2));
-        assert !(component0.equals(component1));
+
+        assertNotEquals(component0,component1);
     }
 
     @Test
@@ -74,7 +79,8 @@ public class ComponentTest {
         ReceiverConfiguration receiverConfig0 = new ReceiverConfiguration(40,1,2,100);
         Component component0 = new DipoleReceiver("rec0",receiverConfig0);
         Component component1 = new DipoleReceiver("rec0",receiverConfig0);
-        assert (component0.equals(component1));
+
+        assertEquals(component0,component1);
     }
 
     @Test
@@ -84,7 +90,8 @@ public class ComponentTest {
         GeneratorConfiguration generatorConfig0 = new GeneratorConfiguration(40,6);
         Component component0 = new DipoleReceiver("rec0",receiverConfig0);
         Component component1 = new Generator("gen0",generatorConfig0);
-        assert !(component0.equals(component1));
+
+        assertNotEquals(component0,component1);
     }
 
 }
