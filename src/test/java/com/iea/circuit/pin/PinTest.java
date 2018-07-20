@@ -12,9 +12,10 @@ public class PinTest {
     @Test
     public void should_create_two_identical_pins_correctly_and_compare_them_true() {
 
-        Pin pin0 = new Pin(Pin.Type.POSITIVE);
-        Pin pin1 = new Pin(Pin.Type.POSITIVE);
+        Pin pin0 = PinFactory.createPositivePin();
+        Pin pin1 = PinFactory.createPositivePin();
         assert (pin0.equals(pin1));
+
     }
 
     @Test
@@ -29,7 +30,7 @@ public class PinTest {
     }
 
     @Test
-    public void should_create_two_different_pins_form_different_generators_and_compare_them_true() {
+    public void should_create_two_different_pins_form_different_generators_and_compare_them_false() {
 
         Generator generator0 = new Generator("gen0", generatorConfig);
         Generator generator1 = new Generator("gen1", generatorConfig);

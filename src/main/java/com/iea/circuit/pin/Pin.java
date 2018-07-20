@@ -38,7 +38,7 @@ public class Pin {
     private final List<Tuple<Pin, Component>> connections;
     private final Type type;
 
-    public Pin(Type type) {
+    Pin(Type type) {
         connections = new ArrayList<>();
         this.type = type;
     }
