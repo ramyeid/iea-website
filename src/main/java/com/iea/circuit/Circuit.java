@@ -8,7 +8,9 @@ import com.iea.utils.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 public class Circuit {
@@ -16,7 +18,7 @@ public class Circuit {
     private final Generator generator;
     private final List<Receiver> receivers;
 
-    public Circuit(Generator generator, List<Receiver> receivers) {
+    private Circuit(Generator generator, List<Receiver> receivers) {
         this.generator = generator;
         this.receivers = receivers;
     }
@@ -36,7 +38,23 @@ public class Circuit {
         if ((o == null) || (getClass() != o.getClass()))
             return false;
         Circuit circuit = (Circuit) o;
-        return Objects.equals(generator, circuit.generator) && Objects.equals(receivers, circuit.receivers);
+        boolean areReceiversEqual = true;
+
+        if ((receivers == null && circuit.getReceivers() != null) || (receivers != null && circuit.getReceivers() == null)) {
+            return false;
+        } else if (receivers != null && circuit.getReceivers() != null) { // <-------- ADDED THIS
+            if (receivers.size() != circuit.getReceivers().size()) return false;
+            int i = 0;
+            for (Receiver receiver : receivers) {
+                if (!(receiver.getId().equals(circuit.receivers.get(i).getId()) && receiver.getFirstPin().equals(circuit.receivers.get(i).getFirstPin()) && receiver.getSecondPin().equals(circuit.receivers.get(i).getSecondPin()))) {
+                    areReceiversEqual = false;
+                    break;
+                }
+                i++;
+            }
+        }
+
+        return Objects.equals(generator, circuit.generator) && areReceiversEqual;
     }
 
     @Override
@@ -44,58 +62,47 @@ public class Circuit {
         return Objects.hash(generator, receivers);
     }
 
+
     public static class Builder {
-        private static Builder builder;
         private Generator generator;
         private List<Receiver> receivers;
 
+        private Builder() {
+        }
+
         public static Builder newBuilder() {
-            if (builder == null) {
-                builder = new Builder();
+            return new Builder();
+        }
+
+        public final Builder setGenerator(Generator generator) {
+            this.generator = generator;
+            return this;
+        }
+
+
+        public final Builder addReceiver(Receiver receiver) {
+            if (this.receivers == null) {
+                this.receivers = new ArrayList<>();
             }
-            return builder;
+            this.receivers.add(receiver);
+            return this;
         }
 
-        public static Builder setGenerator(Generator generator) {
-            builder.generator = generator;
-            return builder;
-        }
-
-        public static Builder addReceiver(Receiver receiver) {
-            if (builder.receivers == null) {
-                builder.receivers = new ArrayList<>();
-            }
-            builder.receivers.add(receiver);
-            return builder;
-        }
-
-        public static Builder connectComponents(Tuple<Pin, Component> pinComponentTuple, Tuple<Pin, Component> pinComponentTuple2) {
+        public Builder connectComponents(Tuple<Pin, Component> pinComponentTuple, Tuple<Pin, Component> pinComponentTuple2) {
             Pin.connectComponents(pinComponentTuple, pinComponentTuple2);
-            return builder;
+            return this;
         }
 
-        public void clearComponents()
-        {
-            builder.receivers = new ArrayList<>();
-            builder.generator = null;
-        }
-        public void setReceivers(List<Receiver> receivers) {
-            this.receivers = receivers;
-        }
 
         public Circuit build() {
-            return new Circuit(builder.generator, builder.receivers);
+            return new Circuit(generator, receivers);
         }
 
-        public Component getComponentById(final String componentId) {
+        public Component getComponentById(String id) {
             List<Component> components = newArrayList();
             components.addAll(receivers);
             components.add(generator);
-            return components.stream()
-                    .filter(component -> component.getId()
-                    .equals(componentId))
-                    .findFirst()
-                    .orElse(null);
+            return components.stream().filter(receiver -> receiver.getId().equals(id)).findFirst().orElse(null);
         }
     }
 }

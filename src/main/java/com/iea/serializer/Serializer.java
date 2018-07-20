@@ -35,12 +35,12 @@ public class Serializer {
         Pin destinationPin;
 
         if (!generator.isEmpty()) { //ignore empty strings
-            Circuit.Builder.setGenerator(new Generator(generator, getGeneratorConfiguration(generator.split(ID_TOKEN)[0])));
+            circuitBuilder.setGenerator(new Generator(generator, getGeneratorConfiguration(generator.split(ID_TOKEN)[0])));
         }
 
         if (!receivers.isEmpty()) { //ignore empty strings
             for (String receiverId : receivers.split(",")) {
-                Circuit.Builder.addReceiver(receiverFactory
+                circuitBuilder.addReceiver(receiverFactory
                         .createDipoleReceiver(receiverId, getReceiverConfiguration(receiverId.split(ID_TOKEN)[0])));
             }
         }
@@ -54,13 +54,11 @@ public class Serializer {
                 sourcePin = decodePin(connectionsList[i+1], sourceComponent);
                 destinationComponent = circuitBuilder.getComponentById(connectionsList[i + 2]);
                 destinationPin = decodePin(connectionsList[i+3], destinationComponent);
-                Circuit.Builder.connectComponents(new Tuple<>(sourcePin, sourceComponent),
+                circuitBuilder.connectComponents(new Tuple<>(sourcePin, sourceComponent),
                         new Tuple<>(destinationPin, destinationComponent));
             }
         }
-        Circuit generatedCircuit = circuitBuilder.build();
-        circuitBuilder.clearComponents();
-        return generatedCircuit;
+        return circuitBuilder.build();
     }
 
     /**
@@ -72,9 +70,9 @@ public class Serializer {
     private static Pin decodePin(String pinRepresentation, Component component) {
         switch (pinRepresentation) {
             case "+":
-                return ((DipoleReceiver)component).getPositivePin();
+                return component.getFirstPin();
             case "-":
-                return ((DipoleReceiver)component).getNegativePin();
+                return component.getSecondPin();
             default:
                 return null;
                 //throw exception

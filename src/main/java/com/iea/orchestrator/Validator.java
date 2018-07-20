@@ -2,19 +2,18 @@ package com.iea.orchestrator;
 
 import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
-import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
 import com.iea.utils.Tuple;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.iea.circuit.pin.Pin.Type.NEGATIVE;
-import static com.iea.circuit.pin.Pin.Type.NEUTRAL;
-import static com.iea.circuit.pin.Pin.Type.POSITIVE;
-import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
+import static com.iea.circuit.pin.Pin.Type.*;
+import static java.util.stream.Collectors.toList;
 
 public class Validator {
 
@@ -29,49 +28,43 @@ public class Validator {
      * @param circuit
      * @return List of receivers in closed circuit.
      */
-    public static List<Component> validate(Circuit circuit) {
-        // Components that are in the closed circuit
-        List<Component> validated = newArrayList();
-        // Components that are reachable from the positive pin of the generator
-        LinkedList<Component> reachableFromPositive = new LinkedList<>();
-        // Components that are reachable from the negative pin of the generator
-        LinkedList<Component> reachableFromNegative = new LinkedList<>();
-        // List used to generate both ValidatedNeg and ValidatedPos
-        LinkedList<Tuple<Pin, Component>> toBeChecked = new LinkedList<>();
-
-        Generator generator = circuit.getGenerator();
-
-        // Generating reachableFromPositive
-        generateReachables(POSITIVE, () -> generator.getPositivePin().getConnections(), reachableFromPositive, toBeChecked);
-        while (!toBeChecked.isEmpty()) {
-            Tuple<Pin, Component> tuple = toBeChecked.removeFirst();
-            generateReachables(POSITIVE, () -> retrieveOppositePin(tuple.getSecond(), tuple.getFirst()).getConnections(), reachableFromNegative, toBeChecked);
+    static List<Component> validate(Circuit circuit) {
+        if (circuit.getGenerator() == null || circuit.getReceivers() == null || circuit.getReceivers().isEmpty()) {
+            return Collections.emptyList();
         }
 
-        // Generating reachableFromNegative
-        generateReachables(NEGATIVE, () -> generator.getNegativePin().getConnections(), reachableFromNegative, toBeChecked);
-        while (!toBeChecked.isEmpty()) {
-            Tuple<Pin, Component> tuple  = toBeChecked.removeFirst();
-            generateReachables(NEGATIVE, () -> retrieveOppositePin(tuple.getSecond(), tuple.getFirst()).getConnections(), reachableFromNegative, toBeChecked);
-        }
+        Set<Component> reachableFromPositive = retrieveComponentsReachableFrom(POSITIVE, () -> circuit.getGenerator().getPositivePin().getConnections());
+        Set<Component> reachableFromNegative = retrieveComponentsReachableFrom(NEGATIVE, () -> circuit.getGenerator().getNegativePin().getConnections());
 
-        //Getting the intersection of both ValidatedPos and ValidatedNeg
-        for (Component component : reachableFromNegative) {
-            if (reachableFromPositive.contains(component)) {
-                validated.add(component);
-            }
-        }
-
-        return reachableFromNegative.stream().filter(reachableFromPositive::contains).collect(Collectors.toList());
+        //Getting the intersection of both reachableFromPositive and reachableFromNegative
+        return reachableFromNegative.stream().filter(reachableFromPositive::contains).collect(toList());
     }
 
-    private static void generateReachables(Pin.Type pinType, Supplier<List<Tuple<Pin, Component>>> connections, LinkedList<Component> reachables, LinkedList<Tuple<Pin, Component>> toBeChecked) {
-        for (Tuple<Pin, Component> connection : connections.get()) {
-            if ((connection.getFirst().getType().equals(pinType) || connection.getFirst().getType().equals(NEUTRAL)) && !reachables.contains(connection.getSecond())) {
-                reachables.add(connection.getSecond());
-                toBeChecked.add(connection);
+    private static Set<Component> retrieveComponentsReachableFrom(Pin.Type pinType, Supplier<List<Tuple<Pin, Component>>> generatorConnections) {
+        // Generating reachableFromPin
+        LinkedList<Tuple<Pin, Component>> toBeChecked = generateReachables(pinType, generatorConnections);
+        // Components that are reachable from the x pin of the generator
+        Set<Component> reachableFromPositive = toBeChecked.stream().map(Tuple::getSecond).collect(Collectors.toSet());
+        while (!toBeChecked.isEmpty()) {
+            Tuple<Pin, Component> tuple = toBeChecked.removeFirst();
+            toBeChecked.addAll(generateReachables(pinType, () -> retrieveOppositePin(tuple.getSecond(), tuple.getFirst()).getConnections()));
+            reachableFromPositive.addAll(toBeChecked.stream().map(Tuple::getSecond).collect(toList()));
+        }
+        return reachableFromPositive;
+    }
+
+    private static LinkedList<Tuple<Pin, Component>> generateReachables(Pin.Type pinType, Supplier<List<Tuple<Pin, Component>>> generatorConnections) {
+        LinkedList<Tuple<Pin, Component>> tupleLinkedList = new LinkedList<>();
+        for (Tuple<Pin, Component> connection : generatorConnections.get()) {
+            if ((connection.getFirst().getType().equals(pinType) || connection.getFirst().getType().equals(NEUTRAL)) && !doesContainComponent(tupleLinkedList, connection.getSecond())) {
+                tupleLinkedList.add(connection);
             }
         }
+        return tupleLinkedList;
+    }
+
+    private static boolean doesContainComponent(LinkedList<Tuple<Pin, Component>> tupleLinkedList, Component component) {
+        return tupleLinkedList.stream().anyMatch(tuple -> tuple.getSecond().equals(component));
     }
 
     private static Pin retrieveOppositePin(Component component, Pin pin) {
