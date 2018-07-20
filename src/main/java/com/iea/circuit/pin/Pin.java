@@ -65,12 +65,34 @@ public class Pin {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Pin pin = (Pin) o;
-        return Objects.equals(connections, pin.connections) &&
+        boolean connectionsEquals = true;
+        if (connections.size() != pin.connections.size()) return false;
+        int i=0;
+        for (Tuple<Pin,Component> connection : connections){
+            if (!(connection.getFirst().type.equals(pin.connections.get(i).getFirst().type) && connection.getSecond().getId().equals(pin.connections.get(i).getSecond().getId()))){
+                connectionsEquals=false;
+                break;}
+
+            i++;
+        }
+                //this.connections.equals(pin.connections) &&
+        return  connectionsEquals &&
                 type == pin.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(connections, type);
+//        return Objects.hash(connections, type);
+        /*if (this == null)
+            return 0;*/
+
+        int result = 1;
+
+        for (Tuple<Pin,Component> connection : this.connections){
+            result = 31 * result + (connection.getFirst().type == null ? 0 : connection.getFirst().type.hashCode());
+            result = 31 * result + (connection.getSecond().getId() == null ? 0 : connection.getSecond().getId().hashCode());}
+        result = 31 * result + (this.getType() == null ? 0 : this.getType().hashCode());
+
+        return result;
     }
 }

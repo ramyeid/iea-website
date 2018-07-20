@@ -23,6 +23,7 @@ public class GeneratorConfiguration {
 
     @Override
     public boolean equals(Object o) {
+        System.out.println("Then they called me!");
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GeneratorConfiguration that = (GeneratorConfiguration) o;
