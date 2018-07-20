@@ -2,7 +2,6 @@ package com.iea.orchestrator;
 
 import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
-import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
 import com.iea.utils.Tuple;
 
@@ -29,7 +28,7 @@ public class Validator {
      * @param circuit
      * @return List of receivers in closed circuit.
      */
-    public static List<Component> validate(Circuit circuit) {
+    static List<Component> validate(Circuit circuit) {
         if (circuit.getGenerator() == null || circuit.getReceivers() == null || circuit.getReceivers().isEmpty()) {
             return Collections.emptyList();
         }

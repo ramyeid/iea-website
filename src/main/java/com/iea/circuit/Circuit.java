@@ -8,6 +8,10 @@ import com.iea.utils.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
+import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 public class Circuit {
 
@@ -35,15 +39,21 @@ public class Circuit {
             return false;
         Circuit circuit = (Circuit) o;
         boolean areReceiversEqual = true;
-        if (receivers.size() != circuit.getReceivers().size()) return false;
-        int i = 0;
-        for (Receiver receiver : receivers) {
-            if (!(receiver.getId().equals(circuit.receivers.get(i).getId()) && receiver.getFirstPin().equals(circuit.receivers.get(i).getFirstPin()) && receiver.getSecondPin().equals(circuit.receivers.get(i).getSecondPin()))) {
-                areReceiversEqual = false;
-                break;
+
+        if ((receivers == null && circuit.getReceivers() != null) || (receivers != null && circuit.getReceivers() == null)) {
+            return false;
+        } else if (receivers != null && circuit.getReceivers() != null) { // <-------- ADDED THIS
+            if (receivers.size() != circuit.getReceivers().size()) return false;
+            int i = 0;
+            for (Receiver receiver : receivers) {
+                if (!(receiver.getId().equals(circuit.receivers.get(i).getId()) && receiver.getFirstPin().equals(circuit.receivers.get(i).getFirstPin()) && receiver.getSecondPin().equals(circuit.receivers.get(i).getSecondPin()))) {
+                    areReceiversEqual = false;
+                    break;
+                }
+                i++;
             }
-            i++;
         }
+
         return Objects.equals(generator, circuit.generator) && areReceiversEqual;
     }
 
@@ -78,7 +88,6 @@ public class Circuit {
             return this;
         }
 
-
         public Builder connectComponents(Tuple<Pin, Component> pinComponentTuple, Tuple<Pin, Component> pinComponentTuple2) {
             Pin.connectComponents(pinComponentTuple, pinComponentTuple2);
             return this;
@@ -90,7 +99,10 @@ public class Circuit {
         }
 
         public Component getComponentById(String id) {
-            return receivers.stream().filter(receiver -> receiver.getId().equals(id)).findFirst().orElse(null);
+            List<Component> components = newArrayList();
+            components.addAll(receivers);
+            components.add(generator);
+            return components.stream().filter(receiver -> receiver.getId().equals(id)).findFirst().orElse(null);
         }
     }
 }

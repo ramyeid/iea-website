@@ -70,9 +70,9 @@ public class Serializer {
     private static Pin decodePin(String pinRepresentation, Component component) {
         switch (pinRepresentation) {
             case "+":
-                return ((DipoleReceiver)component).getPositivePin();
+                return component.getFirstPin();
             case "-":
-                return ((DipoleReceiver)component).getNegativePin();
+                return component.getSecondPin();
             default:
                 return null;
                 //throw exception

@@ -24,7 +24,6 @@ public class Index {
     @PostMapping("/canvas/update")
     public void canvasUpdate(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections) {
         Circuit userCircuit;
-
         userCircuit = Serializer.serialize(generators, receivers, connections);
 
     }

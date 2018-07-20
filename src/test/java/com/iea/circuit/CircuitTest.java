@@ -9,6 +9,9 @@ import com.iea.circuit.receiver.ReceiverConfiguration;
 import com.iea.utils.Tuple;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 public class CircuitTest {
 
     private GeneratorConfiguration generatorConfig0 = new GeneratorConfiguration(40, 6);
@@ -144,6 +147,30 @@ public class CircuitTest {
                 .build();
 
         assert !(circuit1.equals(circuit2));
+    }
+
+
+    @Test
+    public void should_equate_two_circuits_with_no_receivers() {
+        Circuit circuit1 = Circuit.Builder.newBuilder().setGenerator(generator0).build();
+        Circuit circuit2 = Circuit.Builder.newBuilder().setGenerator(generator1).build();
+        assertEquals(circuit1, circuit2);
+    }
+
+    @Test
+    public void should_not_equate_empty_circuit_with_circuit_containing_receivers() {
+        Circuit circuit1 = Circuit.Builder.newBuilder().setGenerator(generator0)
+                                .addReceiver(led01)
+                                .build();
+        Circuit circuit2 = Circuit.Builder.newBuilder().setGenerator(generator1).build();
+        assertNotEquals(circuit1, circuit2);
+    }
+
+    @Test
+    public void should_equate_two_empty_circuits() {
+        Circuit circuit1 = Circuit.Builder.newBuilder().build();
+        Circuit circuit2 = Circuit.Builder.newBuilder().build();
+        assertEquals(circuit1, circuit2);
     }
 
 }
