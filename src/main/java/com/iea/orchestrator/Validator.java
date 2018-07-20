@@ -45,16 +45,20 @@ public class Validator {
         generateReachables(POSITIVE, () -> generator.getPositivePin().getConnections(), reachableFromPositive, toBeChecked);
         while (!toBeChecked.isEmpty()) {
             Tuple<Pin, Component> tuple = toBeChecked.removeFirst();
-            generateReachables(POSITIVE, () -> retrieveOppositePin(tuple.getSecond(), tuple.getFirst()).getConnections(), reachableFromNegative, toBeChecked);
+            generateReachables(POSITIVE, () -> retrieveOppositePin(tuple.getSecond(), tuple.getFirst()).getConnections(), reachableFromPositive, toBeChecked);
         }
-
+        System.out.print("reachableFromPositive: ");
+        for (Component c : reachableFromPositive)
+            System.out.print(c.getId()+' ');
         // Generating reachableFromNegative
         generateReachables(NEGATIVE, () -> generator.getNegativePin().getConnections(), reachableFromNegative, toBeChecked);
         while (!toBeChecked.isEmpty()) {
             Tuple<Pin, Component> tuple  = toBeChecked.removeFirst();
             generateReachables(NEGATIVE, () -> retrieveOppositePin(tuple.getSecond(), tuple.getFirst()).getConnections(), reachableFromNegative, toBeChecked);
         }
-
+        System.out.print("reachableFromNegative: ");
+        for (Component c : reachableFromNegative)
+            System.out.print(c.getId()+' ');
         //Getting the intersection of both ValidatedPos and ValidatedNeg
         for (Component component : reachableFromNegative) {
             if (reachableFromPositive.contains(component)) {

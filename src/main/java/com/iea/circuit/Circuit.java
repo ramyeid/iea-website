@@ -36,7 +36,17 @@ public class Circuit {
         if ((o == null) || (getClass() != o.getClass()))
             return false;
         Circuit circuit = (Circuit) o;
-        return Objects.equals(generator, circuit.generator) && Objects.equals(receivers, circuit.receivers);
+        boolean areReceiversEqual = true;
+        if(receivers.size() != circuit.getReceivers().size()) return false;
+        int i=0;
+        for (Receiver receiver : receivers){
+            if (!(receiver.getId().equals(circuit.receivers.get(i).getId()) && receiver.getFirstPin().equals(circuit.receivers.get(i).getFirstPin()) && receiver.getSecondPin().equals(circuit.receivers.get(i).getSecondPin()))){
+                areReceiversEqual = false;
+                break;
+            }
+            i++;
+        }
+        return Objects.equals(generator, circuit.generator) && areReceiversEqual;
     }
 
     @Override
