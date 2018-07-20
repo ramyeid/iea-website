@@ -51,7 +51,7 @@ public class ValidatorTest {
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -118,7 +118,7 @@ public class ValidatorTest {
         List<Component> expected = newArrayList();
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -137,8 +137,7 @@ public class ValidatorTest {
 
         List<Component> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
-
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -176,7 +175,7 @@ public class ValidatorTest {
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -212,7 +211,7 @@ public class ValidatorTest {
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
     @Test
@@ -242,7 +241,7 @@ public class ValidatorTest {
         List<Component> result = Validator.validate(circuit);
         List<Component> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -268,7 +267,7 @@ public class ValidatorTest {
         List<Component> expected = newArrayList();
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
     @Test
@@ -301,7 +300,7 @@ public class ValidatorTest {
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -333,7 +332,7 @@ public class ValidatorTest {
         List<Component> result = Validator.validate(circuit);
         List<Component> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -362,8 +361,7 @@ public class ValidatorTest {
         List<Component> expected = newArrayList();
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
-
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
     }
 
     //delta connection
@@ -398,7 +396,7 @@ public class ValidatorTest {
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -426,7 +424,7 @@ public class ValidatorTest {
         List<Component> expected = newArrayList();
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -438,7 +436,7 @@ public class ValidatorTest {
         List<Component> result = Validator.validate(circuit);
         List<Component> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
 
     }
