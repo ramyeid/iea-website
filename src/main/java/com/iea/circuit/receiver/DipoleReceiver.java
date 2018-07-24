@@ -19,8 +19,23 @@ public class DipoleReceiver extends Receiver {
     }
 
     @Override
-    public ReceiverStatus retrieveStatus(double amper, double volt) {
-        return ReceiverStatus.OPTIMAL;
+    public ReceiverStatus retrieveStatus(double amp, double volt) {
+        double toleranceRate = 0.5;
+        if (volt < configuration.getMinVolt()) {
+            return ReceiverStatus.OFF;
+        }
+        if (volt <= configuration.getMaxVolt() && volt >= configuration.getMinVolt()) {
+            if (amp < configuration.getOptimalAmper() - configuration.getOptimalAmper() * toleranceRate) {
+                return ReceiverStatus.LOW;
+            }
+            if (amp <= configuration.getOptimalAmper() + configuration.getOptimalAmper() * toleranceRate)
+                return ReceiverStatus.OPTIMAL;
+            return ReceiverStatus.DAMAGED;
+        }
+        if (volt > configuration.getMaxVolt())
+            return ReceiverStatus.DAMAGED;
+
+        return ReceiverStatus.OFF;
     }
 
 }
