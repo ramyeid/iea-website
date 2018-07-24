@@ -16,7 +16,17 @@ public class Pin {
     //~ ----------------------------------------------------------------------------------------------------------------
 
     public enum Type {
-        POSITIVE, NEGATIVE, NEUTRAL
+        POSITIVE("+"), NEGATIVE("-"), NEUTRAL("~");
+        String typeAsString;
+
+        Type(String type) {
+            this.typeAsString = type;
+        }
+
+        @Override
+        public String toString() {
+            return typeAsString;
+        }
     }
 
     //~ ----------------------------------------------------------------------------------------------------------------
@@ -65,16 +75,16 @@ public class Pin {
         if (connections.size() != pin.connections.size()) {
             return false;
         }
-        int i=0;
-        for (Tuple<Pin,Component> connection : connections){
-            if (!(connection.getFirst().type.equals(connectionsAsList.get(i).getFirst().type) && connection.getSecond().getId().equals(connectionsAsList.get(i).getSecond().getId()))){
-                connectionsEquals=false;
+        int i = 0;
+        for (Tuple<Pin, Component> connection : connections) {
+            if (!(connection.getFirst().type.equals(connectionsAsList.get(i).getFirst().type) && connection.getSecond().getId().equals(connectionsAsList.get(i).getSecond().getId()))) {
+                connectionsEquals = false;
                 break;
             }
             i++;
         }
         //this.connections.equals(pin.connections) &&
-        return  connectionsEquals &&
+        return connectionsEquals &&
                 type == pin.type;
     }
 
@@ -86,7 +96,7 @@ public class Pin {
 
         int result = 1;
 
-        for (Tuple<Pin,Component> connection : this.connections){
+        for (Tuple<Pin, Component> connection : this.connections) {
             result = 31 * result + (connection.getFirst().type == null ? 0 : connection.getFirst().type.hashCode());
             result = 31 * result + (connection.getSecond().getId() == null ? 0 : connection.getSecond().getId().hashCode());
         }

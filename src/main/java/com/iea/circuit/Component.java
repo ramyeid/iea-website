@@ -2,7 +2,10 @@ package com.iea.circuit;
 
 import com.iea.circuit.pin.Pin;
 
+import java.util.List;
 import java.util.Objects;
+
+import static java.util.Arrays.asList;
 
 
 public abstract class Component {
@@ -23,6 +26,10 @@ public abstract class Component {
 
     public Pin getFirstPin() {
         return firstPin;
+    }
+
+    public List<Pin> getPins() {
+        return asList(firstPin, secondPin);
     }
 
     public Pin getSecondPin() {

@@ -1,5 +1,4 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%--@elvariable id="text" type="java.lang.string"--%>
 
 <!DOCTYPE HTML>
 <html lang="en">

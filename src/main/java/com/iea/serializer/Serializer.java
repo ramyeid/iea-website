@@ -4,12 +4,15 @@ import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
-import com.iea.circuit.receiver.DipoleReceiver;
 import com.iea.circuit.receiver.ReceiverFactory;
 import com.iea.utils.Tuple;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.iea.serializer.Configurations.getGeneratorConfiguration;
 import static com.iea.serializer.Configurations.getReceiverConfiguration;
+import static com.iea.serializer.Configurations.getReceiverType;
 
 public class Serializer {
 
@@ -17,16 +20,23 @@ public class Serializer {
 
     /**
      * Function used to build a circuit out of 3 strings
-     * @param generator: string containing a list of generator IDs
-     * @param receivers: string containing a list of receiver IDs
+     * @param generator: string containing the generator's ID, e.g. "bat0"
+     * @param receivers: string containing a list of receiver IDs, e.g. "res-1,led-2,buz-3"
      * @param connections: string containing lists of quadruples representing the connections
      *                     quadruple format is as follows:
      *                     sourceComponentId, sourcePin, destinationComponentId, destinationPin
+     *                e.g. "bat0,+,res-1,+" connects the positive pin of bat0 to the positive pin of res-1
+     *
+     * Pin types: pin types for connections are mapped as follows:
+     *    +  -> positive
+     *    -  -> negative
+     *   ~1  -> neutral 1
+     *   ~2  -> neutral 2
+     *
      * @return returns a circuit with the generator, receivers, and connections given
      */
     public static Circuit serialize(String generator, String receivers, String connections) {
         Circuit.Builder circuitBuilder = Circuit.Builder.newBuilder();
-        ReceiverFactory receiverFactory = new ReceiverFactory();
 
         //variables used for wiring components
         Component sourceComponent;
@@ -40,8 +50,8 @@ public class Serializer {
 
         if (!receivers.isEmpty()) { //ignore empty strings
             for (String receiverId : receivers.split(",")) {
-                circuitBuilder.addReceiver(receiverFactory
-                        .createDipoleReceiver(receiverId, getReceiverConfiguration(receiverId.split(ID_TOKEN)[0])));
+                circuitBuilder.addReceiver(ReceiverFactory
+                        .createReceiver(getReceiverType(receiverId.split(ID_TOKEN)[0]), receiverId ,getReceiverConfiguration(receiverId.split(ID_TOKEN)[0])));
             }
         }
 
@@ -68,14 +78,19 @@ public class Serializer {
      * @return returns the concerned pin of the component
      */
     private static Pin decodePin(String pinRepresentation, Component component) {
-        switch (pinRepresentation) {
-            case "+":
+        if (pinRepresentation.charAt(0) == '~') {
+            if (pinRepresentation.charAt(1) == '1') {
                 return component.getFirstPin();
-            case "-":
+            } else {
                 return component.getSecondPin();
-            default:
-                return null;
-                //throw exception
+            }
         }
+        List<Pin> matchingPins = component.getPins().stream().filter(t -> t.getType().toString().equals(pinRepresentation)).collect(Collectors.toList());
+
+        if (matchingPins.size() > 1 || matchingPins.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        return matchingPins.get(0);
     }
 }
