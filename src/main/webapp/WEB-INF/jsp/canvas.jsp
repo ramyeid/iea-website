@@ -50,5 +50,6 @@
     <label id="textLabel"></label>
   </div>
 </footer>
-<script src="scripts/canvas.js" ></script>
+<script src="scripts/canvas.js"></script>
+<script src="scripts/canvasUpdater.js"></script>
 </html>

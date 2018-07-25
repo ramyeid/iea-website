@@ -47,24 +47,6 @@ function duplicateComponent(caller){
 	
 }
 
-submitbutton.addEventListener("click", function(){
-    let connectionsString = wiringList.toString();
-    let receiversString = receiverList.toString();
-    let generatorsString = generatorList.toString();
-
-    $.ajax({
-         type: 'POST',
-         url: "/canvas/update",
-         data: { generators: generatorsString, receivers: receiversString, connections: connectionsString},
-         success: function(data)
-         {
-            alert(data); //implement updating logic here
-         }
-    });
-
-    textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
-});
-
 function checkDipolePin(object, clickx, clicky) {
     if (clickx > object.width/2)
         return "+";
