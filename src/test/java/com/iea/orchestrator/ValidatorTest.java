@@ -1,24 +1,21 @@
 package com.iea.orchestrator;
 
 import com.iea.circuit.Circuit;
-import com.iea.circuit.Component;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;
-import com.iea.circuit.receiver.DipoleReceiver;
-import com.iea.circuit.receiver.ReceiverConfiguration;
+import com.iea.circuit.receiver.*;
 import com.iea.utils.Tuple;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.List;
 
-
+import static java.util.Arrays.asList;
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
+import static org.hibernate.validator.internal.util.CollectionHelper.newHashSet;
 import static org.junit.Assert.assertEquals;
 
 public class ValidatorTest {
-
-
     //Normal series Circuit
     @Test
     public void should_ensure_validator_returns_components_in_closed_circuit_for_complete_series_circuit() {
@@ -28,60 +25,60 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(motor01.getPositivePin(), motor01))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(led02.getPositivePin(), led02))
-                .connectComponents(new Tuple<>(led02.getNegativePin(), led02), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(motor01.getFirstPin(), motor01))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(led02.getFirstPin(), led02))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
+        List<Receiver> result = Validator.validate(circuit);
 
-        List<Component> expected = newArrayList();
+        List<Receiver> expected = newArrayList();
         expected.add(led01);
         expected.add(led02);
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
     //If one component is off the circuit but the rest are connected
     @Test
-    public void should_ensure_validator_returns_components_in_closed_circuit_for_ciruit_with_unconnected_receiver() {
+    public void should_ensure_validator_returns_components_in_closed_circuit_for_circuit_with_unconnected_receiver() {
 
         ReceiverConfiguration ledConfig = new ReceiverConfiguration(1, 1, 4, 1);
         ReceiverConfiguration motorConfig = new ReceiverConfiguration(2, 2, 5, 2);
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver mot01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver mot01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(mot01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(mot01.getPositivePin(), mot01))
-                .connectComponents(new Tuple<>(mot01.getNegativePin(), mot01), new Tuple<>(generator.getNegativePin(), generator))
-                .connectComponents(new Tuple<>(mot01.getNegativePin(), mot01), new Tuple<>(led02.getPositivePin(), led02))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(mot01.getFirstPin(), mot01))
+                .connectComponents(new Tuple<>(mot01.getSecondPin(), mot01), new Tuple<>(generator.getSecondPin(), generator))
+                .connectComponents(new Tuple<>(mot01.getSecondPin(), mot01), new Tuple<>(led02.getFirstPin(), led02))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
+        List<Receiver> result = Validator.validate(circuit);
 
-        List<Component> expected = newArrayList();
+        List<Receiver> expected = newArrayList();
         expected.add(led01);
         expected.add(mot01);
 
@@ -99,26 +96,26 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(motor01.getPositivePin(), motor01))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(led02.getPositivePin(), led02))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(motor01.getFirstPin(), motor01))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(led02.getFirstPin(), led02))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
+        List<Receiver> result = Validator.validate(circuit);
 
-        List<Component> expected = newArrayList();
+        List<Receiver> expected = newArrayList();
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -130,15 +127,14 @@ public class ValidatorTest {
         Generator generator = new Generator("gen01", generatorConfig);
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
+        List<Receiver> result = Validator.validate(circuit);
 
-        List<Component> expected = newArrayList();
+        List<Receiver> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
-
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -152,31 +148,31 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(generator.getNegativePin(), generator))
-                .connectComponents(new Tuple<>(motor01.getPositivePin(), motor01), new Tuple<>(generator.getPositivePin(), generator))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(generator.getNegativePin(), generator))
-                .connectComponents(new Tuple<>(led02.getPositivePin(), led02), new Tuple<>(generator.getPositivePin(), generator))
-                .connectComponents(new Tuple<>(led02.getNegativePin(), led02), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(generator.getSecondPin(), generator))
+                .connectComponents(new Tuple<>(motor01.getFirstPin(), motor01), new Tuple<>(generator.getFirstPin(), generator))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(generator.getSecondPin(), generator))
+                .connectComponents(new Tuple<>(led02.getFirstPin(), led02), new Tuple<>(generator.getFirstPin(), generator))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
         expected.add(led01);
         expected.add(led02);
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -189,32 +185,34 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(motor01.getPositivePin(), motor01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(led02.getPositivePin(), led02))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(generator.getNegativePin(), generator))
-                .connectComponents(new Tuple<>(led02.getNegativePin(), led02), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(motor01.getFirstPin(), motor01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(led02.getFirstPin(), led02))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(generator.getSecondPin(), generator))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
         expected.add(led01);
         expected.add(led02);
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
+    //one component has reversed pins the rest have normal cocnnections
+    //series circuit
     @Test
     public void should_ensure_validator_returns_components_in_closed_circuit_for_reversed_pins_in_series_circuit() {
 
@@ -223,26 +221,26 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getNegativePin(), led01))
-                .connectComponents(new Tuple<>(led01.getPositivePin(), led01), new Tuple<>(motor01.getPositivePin(), motor01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(led02.getPositivePin(), led02))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(generator.getNegativePin(), generator))
-                .connectComponents(new Tuple<>(led02.getNegativePin(), led02), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getSecondPin(), led01))
+                .connectComponents(new Tuple<>(led01.getFirstPin(), led01), new Tuple<>(motor01.getFirstPin(), motor01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(led02.getFirstPin(), led02))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(generator.getSecondPin(), generator))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -255,58 +253,61 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getNegativePin(), led01))
-                .connectComponents(new Tuple<>(led01.getPositivePin(), led01), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getSecondPin(), led01))
+                .connectComponents(new Tuple<>(led01.getFirstPin(), led01), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
+
+    //two components connect in series
+    //one component with reversed pins connected in parallel
     @Test
-    public void should_ensure_validator_returns_components_in_closed_circuit_for_circuit_with_series_receiver_and_reversed_pins_in_parallel_receiver() {
+    public void should_ensure_validator_returns_components_in_closed_circuit_with_series_receiver_and_reversed_pins_in_parallel_receiver() {
 
         ReceiverConfiguration ledConfig = new ReceiverConfiguration(1, 1, 4, 1);
         ReceiverConfiguration motorConfig = new ReceiverConfiguration(2, 2, 5, 2);
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(motor01.getPositivePin(), motor01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(led02.getNegativePin(), led02))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(generator.getNegativePin(), generator))
-                .connectComponents(new Tuple<>(led02.getPositivePin(), led02), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(motor01.getFirstPin(), motor01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(led02.getSecondPin(), led02))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(generator.getSecondPin(), generator))
+                .connectComponents(new Tuple<>(led02.getFirstPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
         expected.add(led01);
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
 
-    //one component has the pins switched
+    //multiple components have the pins switched
     @Test
     public void should_ensure_validator_returns_components_in_closed_circuit_for_circuit_with_multiple_receivers_with_switched_pins() {
 
@@ -315,25 +316,25 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(motor01.getNegativePin(), motor01))
-                .connectComponents(new Tuple<>(motor01.getPositivePin(), motor01), new Tuple<>(led02.getPositivePin(), led02))
-                .connectComponents(new Tuple<>(led02.getNegativePin(), led02), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(motor01.getSecondPin(), motor01))
+                .connectComponents(new Tuple<>(motor01.getFirstPin(), motor01), new Tuple<>(led02.getFirstPin(), led02))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -346,24 +347,23 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(led02.getNegativePin(), led02))
-                .connectComponents(new Tuple<>(led02.getNegativePin(), led02), new Tuple<>(led01.getPositivePin(), led01))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(led02.getSecondPin(), led02))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(led01.getFirstPin(), led01))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
-
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
     }
 
     //delta connection
@@ -375,30 +375,30 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(generator.getPositivePin(), generator), new Tuple<>(led01.getPositivePin(), led01))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(generator.getNegativePin(), generator))
-                .connectComponents(new Tuple<>(led02.getPositivePin(), led02), new Tuple<>(generator.getPositivePin(), generator))
-                .connectComponents(new Tuple<>(led02.getNegativePin(), led02), new Tuple<>(motor01.getPositivePin(), motor01))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(generator.getNegativePin(), generator))
+                .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(generator.getSecondPin(), generator))
+                .connectComponents(new Tuple<>(led02.getFirstPin(), led02), new Tuple<>(generator.getFirstPin(), generator))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(motor01.getFirstPin(), motor01))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
         expected.add(led01);
         expected.add(led02);
         expected.add(motor01);
 
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
 
@@ -409,25 +409,22 @@ public class ValidatorTest {
         ReceiverConfiguration ledConfig = new ReceiverConfiguration(1, 1, 4, 1);
         ReceiverConfiguration motorConfig = new ReceiverConfiguration(2, 2, 5, 2);
 
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
-        DipoleReceiver led02 = new DipoleReceiver("led02", ledConfig);
-        DipoleReceiver motor01 = new DipoleReceiver("mot01", motorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01",ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
-                .connectComponents(new Tuple<>(led01.getPositivePin(), led01), new Tuple<>(led02.getNegativePin(), led02))
-                .connectComponents(new Tuple<>(led01.getNegativePin(), led01), new Tuple<>(motor01.getPositivePin(), motor01))
-                .connectComponents(new Tuple<>(motor01.getNegativePin(), motor01), new Tuple<>(led02.getPositivePin(), led02))
+                .connectComponents(new Tuple<>(led01.getFirstPin(), led01), new Tuple<>(led02.getSecondPin(), led02))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(motor01.getFirstPin(), motor01))
+                .connectComponents(new Tuple<>(motor01.getSecondPin(), motor01), new Tuple<>(led02.getFirstPin(), led02))
                 .build();
 
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
-
-
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
-
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
     }
 
 
@@ -435,11 +432,116 @@ public class ValidatorTest {
     @Test
     public void should_ensure_validator_returns_components_in_closed_circuit_for_an_empty_circuit() {
         Circuit circuit = Circuit.Builder.newBuilder().build();
-        List<Component> result = Validator.validate(circuit);
-        List<Component> expected = newArrayList();
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
 
-        assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
+    }
 
+    //testing special case circuit
+    @Test
+    public void should_ensure_validator_returns_components_in_closed_circuit_for_circuit_without_generatora() {
+
+        ReceiverConfiguration ledConfig = new ReceiverConfiguration(1, 1, 4, 1);
+        ReceiverConfiguration motorConfig = new ReceiverConfiguration(2, 2, 5, 2);
+        GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
+
+        Generator generator = new Generator("gen01", generatorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
+        Receiver motor02 =ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot02",motorConfig);
+
+        Circuit.Builder.newBuilder();
+        Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
+                .addReceiver(led01)
+                .addReceiver(led02)
+                .addReceiver(motor01)
+                .addReceiver(motor02)
+                .connectComponents(new Tuple<>(generator.getFirstPin(),generator),new Tuple<>(led01.getFirstPin(),led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(),led01),new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(led02.getFirstPin(),led02),new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(generator.getSecondPin(),generator),new Tuple<>(motor02.getSecondPin(),motor02))
+                .connectComponents(new Tuple<>(motor02.getFirstPin(),motor02),new Tuple<>(motor01.getSecondPin(),motor01))
+                .connectComponents(new Tuple<>(motor01.getFirstPin(),motor01),new Tuple<>(led02.getSecondPin(),led02))
+                .build();
+
+
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
+        expected.add(led01);
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
 
     }
+    //testing same special case circuit with different connections
+    @Test
+    public void should_ensure_validator_returns_components_in_closed_circuit_for_circuit_without_generatoraa() {
+
+        ReceiverConfiguration ledConfig = new ReceiverConfiguration(1, 1, 4, 1);
+        ReceiverConfiguration motorConfig = new ReceiverConfiguration(2, 2, 5, 2);
+        GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
+
+        Generator generator = new Generator("gen01", generatorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
+        Receiver motor02 =ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot02",motorConfig);
+
+        Circuit.Builder.newBuilder();
+        Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
+                .addReceiver(led01)
+                .addReceiver(led02)
+                .addReceiver(motor01)
+                .addReceiver(motor02)
+                .connectComponents(new Tuple<>(generator.getFirstPin(),generator),new Tuple<>(led01.getFirstPin(),led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(),led01),new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(led02.getFirstPin(),led02),new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(generator.getSecondPin(),generator),new Tuple<>(motor02.getSecondPin(),motor02))
+                .connectComponents(new Tuple<>(motor02.getFirstPin(),motor02),new Tuple<>(motor01.getSecondPin(),motor01))
+                .connectComponents(new Tuple<>(motor01.getFirstPin(),motor01),new Tuple<>(led02.getSecondPin(),led02))
+                .connectComponents(new Tuple<>(led01.getSecondPin(),led01),new Tuple<>(led02.getFirstPin(),led02))
+                .build();
+
+
+        List<Receiver> result = Validator.validate(circuit);
+        assertEquals(new HashSet<>(asList(led01, led02, motor01, motor02)), newHashSet(result));
+    }
+    //testing same special case circuit with another way of connections
+    @Test
+    public void should_ensure_validator_returns_components_in_closed_circuit_for_circuit_without_generatoraaa() {
+
+        ReceiverConfiguration ledConfig = new ReceiverConfiguration(1, 1, 4, 1);
+        ReceiverConfiguration motorConfig = new ReceiverConfiguration(2, 2, 5, 2);
+        GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
+
+        Generator generator = new Generator("gen01", generatorConfig);
+        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
+        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
+        Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
+        Receiver motor02 =ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot02",motorConfig);
+
+        Circuit.Builder.newBuilder();
+        Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
+                .addReceiver(led01)
+                .addReceiver(led02)
+                .addReceiver(motor01)
+                .addReceiver(motor02)
+                .connectComponents(new Tuple<>(generator.getFirstPin(),generator),new Tuple<>(led01.getFirstPin(),led01))
+                .connectComponents(new Tuple<>(led01.getSecondPin(),led01),new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(led02.getFirstPin(),led02),new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(generator.getSecondPin(),generator),new Tuple<>(motor02.getSecondPin(),motor02))
+                .connectComponents(new Tuple<>(motor02.getFirstPin(),motor02),new Tuple<>(motor01.getSecondPin(),motor01))
+                .connectComponents(new Tuple<>(motor01.getFirstPin(),motor01),new Tuple<>(led02.getSecondPin(),led02))
+                .connectComponents(new Tuple<>(motor01.getFirstPin(),motor01),new Tuple<>(led02.getSecondPin(),led02))
+                .build();
+
+
+        List<Receiver> result = Validator.validate(circuit);
+        List<Receiver> expected = newArrayList();
+        expected.add(led01);
+        assertEquals(new HashSet<>(result), new HashSet<>(expected));
+
+    }
+
+
 }

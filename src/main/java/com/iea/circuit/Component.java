@@ -28,9 +28,7 @@ public abstract class Component {
         return firstPin;
     }
 
-    public List<Pin> getPins() {
-        return asList(firstPin, secondPin);
-    }
+    public abstract List<Pin> getPins();
 
     public Pin getSecondPin() {
         return secondPin;

@@ -4,7 +4,9 @@ import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
+
 import com.iea.circuit.receiver.ReceiverFactory;
+import com.iea.serializer.exception.PinDecodeError;
 import com.iea.utils.Tuple;
 
 import java.util.List;
@@ -50,6 +52,7 @@ public class Serializer {
 
         if (!receivers.isEmpty()) { //ignore empty strings
             for (String receiverId : receivers.split(",")) {
+
                 circuitBuilder.addReceiver(ReceiverFactory
                         .createReceiver(getReceiverType(receiverId.split(ID_TOKEN)[0]), receiverId ,getReceiverConfiguration(receiverId.split(ID_TOKEN)[0])));
             }
@@ -77,7 +80,8 @@ public class Serializer {
      * @param component: Component object whose pins are being checked
      * @return returns the concerned pin of the component
      */
-    private static Pin decodePin(String pinRepresentation, Component component) {
+
+    private static Pin decodePin(String pinRepresentation, Component component) throws PinDecodeError {
         if (pinRepresentation.charAt(0) == '~') {
             if (pinRepresentation.charAt(1) == '1') {
                 return component.getFirstPin();
@@ -88,7 +92,7 @@ public class Serializer {
         List<Pin> matchingPins = component.getPins().stream().filter(t -> t.getType().toString().equals(pinRepresentation)).collect(Collectors.toList());
 
         if (matchingPins.size() > 1 || matchingPins.isEmpty()) {
-            throw new RuntimeException();
+            throw new PinDecodeError();
         }
 
         return matchingPins.get(0);

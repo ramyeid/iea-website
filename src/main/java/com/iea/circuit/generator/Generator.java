@@ -4,7 +4,10 @@ import com.iea.circuit.Component;
 import com.iea.circuit.pin.Pin;
 import com.iea.circuit.pin.PinFactory;
 
+import java.util.List;
 import java.util.Objects;
+
+import static java.util.Arrays.asList;
 
 
 public class Generator extends Component {
@@ -26,6 +29,11 @@ public class Generator extends Component {
 
     public GeneratorConfiguration getGeneratorConfiguration() {
         return generatorConfiguration;
+    }
+
+    @Override
+    public List<Pin> getPins() {
+        return asList(getFirstPin(), getSecondPin());
     }
 
     @Override

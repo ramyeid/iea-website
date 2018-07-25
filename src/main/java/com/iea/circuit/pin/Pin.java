@@ -11,10 +11,6 @@ import static org.hibernate.validator.internal.util.CollectionHelper.newArrayLis
 
 public class Pin {
 
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Enums
-    //~ ----------------------------------------------------------------------------------------------------------------
-
     public enum Type {
         POSITIVE("+"), NEGATIVE("-"), NEUTRAL("~");
         String typeAsString;
@@ -28,10 +24,6 @@ public class Pin {
             return typeAsString;
         }
     }
-
-    //~ ----------------------------------------------------------------------------------------------------------------
-    //~ Instance fields
-    //~ ----------------------------------------------------------------------------------------------------------------
 
     private final List<Tuple<Pin, Component>> connections;
     private final Type type;
@@ -96,7 +88,7 @@ public class Pin {
 
         int result = 1;
 
-        for (Tuple<Pin, Component> connection : this.connections) {
+        for (Tuple<Pin,Component> connection : this.connections){
             result = 31 * result + (connection.getFirst().type == null ? 0 : connection.getFirst().type.hashCode());
             result = 31 * result + (connection.getSecond().getId() == null ? 0 : connection.getSecond().getId().hashCode());
         }

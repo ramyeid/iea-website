@@ -39,8 +39,8 @@ public class CircuitTest {
                 .connectComponents(new Tuple<>(((DipoleReceiver) led11).getNegativePin(), led11), new Tuple<>(generator1.getNegativePin(), generator1))
                 .build();
 
-        assert (circuit1.equals(circuit2));
-        //assert (new HashSet<>(result).equals(new HashSet<>(expected)));
+
+        assertEquals (circuit1 ,circuit2);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class CircuitTest {
                 .connectComponents(new Tuple<>(((DipoleReceiver) led12).getNegativePin(), led12), new Tuple<>(generator1.getNegativePin(), generator1))
                 .build();
 
-        assert (circuit1.equals(circuit2));
+        assertEquals (circuit1 ,circuit2);
         /*List<Component> result = Validator.validate(circuit1);
         List<Component> expected = newArrayList();
         expected.add(led01); expected.add(led02);
@@ -88,7 +88,7 @@ public class CircuitTest {
                 .connectComponents(new Tuple<>(((DipoleReceiver) mot11).getNegativePin(), mot11), new Tuple<>(generator1.getNegativePin(), generator1))
                 .build();
 
-        assert (circuit1.equals(circuit2));
+        assertEquals (circuit1 ,circuit2);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class CircuitTest {
                 .connectComponents(new Tuple<>(((DipoleReceiver) led12).getNegativePin(), led12), new Tuple<>(generator1.getNegativePin(), generator1))
                 .build();
 
-        assert !(circuit1.equals(circuit2));
+        assertNotEquals(circuit1 ,circuit2);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class CircuitTest {
                 .connectComponents(new Tuple<>(((DipoleReceiver) led12).getNegativePin(), led12), new Tuple<>(generator1.getNegativePin(), generator1))
                 .build();
 
-        assert !(circuit1.equals(circuit2));
+        assertNotEquals(circuit1 ,circuit2);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class CircuitTest {
                 .connectComponents(new Tuple<>(((DipoleReceiver) led12).getNegativePin(), led12), new Tuple<>(generator1.getNegativePin(), generator1))
                 .build();
 
-        assert !(circuit1.equals(circuit2));
+        assertNotEquals(circuit1 ,circuit2);
     }
 
 

@@ -3,6 +3,7 @@ package com.iea.orchestrator;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
 import com.iea.circuit.pin.Pin;
+import com.iea.circuit.receiver.Receiver;
 import com.iea.utils.Tuple;
 
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static com.iea.circuit.pin.Pin.Type.*;
 import static java.util.stream.Collectors.toList;
+import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 public class Validator {
 
@@ -28,16 +30,17 @@ public class Validator {
      * @param circuit
      * @return List of receivers in closed circuit.
      */
-    static List<Component> validate(Circuit circuit) {
+    public static List<Receiver> validate(Circuit circuit)
+    {
         if (circuit.getGenerator() == null || circuit.getReceivers() == null || circuit.getReceivers().isEmpty()) {
-            return Collections.emptyList();
+            return newArrayList();
         }
 
         Set<Component> reachableFromPositive = retrieveComponentsReachableFrom(POSITIVE, () -> circuit.getGenerator().getPositivePin().getConnections());
         Set<Component> reachableFromNegative = retrieveComponentsReachableFrom(NEGATIVE, () -> circuit.getGenerator().getNegativePin().getConnections());
 
         //Getting the intersection of both reachableFromPositive and reachableFromNegative
-        return reachableFromNegative.stream().filter(reachableFromPositive::contains).collect(toList());
+        return reachableFromNegative.stream().filter(reachableFromPositive::contains).map(t->(Receiver)t).collect(toList());
     }
 
     private static Set<Component> retrieveComponentsReachableFrom(Pin.Type pinType, Supplier<List<Tuple<Pin, Component>>> generatorConnections) {

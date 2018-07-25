@@ -10,7 +10,7 @@
 </head>
 <body>
   <div id="main" style=" height : 80%; width:80%;">
-      <img id = "rpi" src='img/rpi.png'/>
+      <img id = "rpi" src='/images/rpi/rpi.png'/>
   </div>
   <div id="components" style="position: absolute; left: 79%; top: 0; width: 20%;">
     <table border='2'>
@@ -21,23 +21,23 @@
       </tr>
       <tr>
         <td>
-          <img id ='led' src='img/led.png' width='145' height='145'/>
+          <img id ='led' src='/images/led/led0.png' width='145' height='145'/>
         </td>
         <td>
-          <img id ='buz' src='img/buzzer.png' width='145' height='145'/>
+          <img id ='buz' src='/images/buzzer/buz0.png' width='145' height='145'/>
         </td>
       </tr>
       <tr>
         <td>
-          <img id ='res' src='img/resistor.png' width='145' height='145'/>
+          <img id ='res' src='/images/resistor/res0.png' width='145' height='145'/>
         </td>
         <td>
-          <img id ='bat' src='img/battery.png' width='145' height='145'/>
+          <img id ='bat' src='/images/battery/bat.png' width='145' height='145'/>
         </td>
       </tr>
       <tr>
         <td colspan='2'>
-          <img id ='wire' src='img/jumper.png' width='145' height='145' />
+          <img id ='wire' src='/images/jumper.png' width='145' height='145' />
         </td>
       </tr>
     </table>
@@ -47,7 +47,7 @@
 <footer style=" position:absolute; bottom:0; width:100%; height:10%; background:#6cf;">
   <div  id="Submit">
     <input type="button" id="submitbutton" value="Submit">
-    <label id="textlabel"></label>
+    <label id="textLabel"></label>
   </div>
 </footer>
 <script src="scripts/canvas.js" ></script>

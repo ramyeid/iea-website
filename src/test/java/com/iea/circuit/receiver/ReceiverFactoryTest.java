@@ -1,5 +1,6 @@
 package com.iea.circuit.receiver;
 
+import com.iea.circuit.receiver.exception.UnrecognisedReceiverTypeError;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
