@@ -26,6 +26,6 @@ public class Index {
     @ResponseBody
     public String canvasUpdate(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections) {
         Circuit userCircuit = Serializer.serialize(generators, receivers, connections);
-        return "led-0:2,buz-1:3";
+        return "led-0:1,buz-1:1,led-2:2,buz-3:2,led-4:3";
     }
 }

@@ -51,5 +51,6 @@
   </div>
 </footer>
 <script src="scripts/canvas.js"></script>
+<script src="scripts/canvasWiring.js"></script>
 <script src="scripts/canvasUpdater.js"></script>
 </html>
