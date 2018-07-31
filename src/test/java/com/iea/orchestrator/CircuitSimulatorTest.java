@@ -7,7 +7,9 @@ import com.iea.circuit.receiver.DipoleReceiver;
 import com.iea.circuit.receiver.Receiver;
 import com.iea.circuit.receiver.ReceiverConfiguration;
 import com.iea.circuit.receiver.ReceiverStatus;
+import com.iea.orchestrator.exception.NoGeneratorException;
 import com.iea.utils.Tuple;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -74,7 +76,7 @@ public class CircuitSimulatorTest {
 
     @Test
     public void should_ensure_retreiveStatus_returns_DAMAGED_due_to_high_voltage_for_receivers() {
-        Circuit circuit=CircuitTemplates.create_series_circuit_with_three_receivers_series_receivers_receiver_low_maxvolt();
+        Circuit circuit = CircuitTemplates.create_series_circuit_with_three_receivers_series_receivers_receiver_low_maxvolt();
 
         List<Receiver> validatedComponents = Validator.validate(circuit);
         double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
@@ -170,6 +172,18 @@ public class CircuitSimulatorTest {
         expected.put(motor01, ReceiverStatus.DAMAGED);
 
         assertEquals(result, expected);
+    }
+
+    @Test(expected = NoGeneratorException.class)
+    public void NoGeneratorFoundExceptionTest() throws NoGeneratorException {
+        ReceiverConfiguration ledConfig = new ReceiverConfiguration(1.2, 1, 4, 1);
+        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
+
+        Circuit.Builder.newBuilder();
+        Circuit circuit = Circuit.Builder.newBuilder().addReceiver(led01).build();
+        CircuitSimulator circuitSimulator = new CircuitSimulator();
+        circuitSimulator.onStart(circuit);
+
     }
 }
 
