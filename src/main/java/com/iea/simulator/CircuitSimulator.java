@@ -1,21 +1,19 @@
-package com.iea.orchestrator;
+package com.iea.simulator;
 
-import com.iea.ScreenListener;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.receiver.Receiver;
 import com.iea.circuit.receiver.ReceiverConfiguration;
 import com.iea.circuit.receiver.ReceiverStatus;
-import com.iea.orchestrator.exception.NoGeneratorException;
+import com.iea.simulator.exception.NoGeneratorException;
 
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 
-public class CircuitSimulator implements ScreenListener {
+public class CircuitSimulator {
 
-    @Override
-    public Map<Receiver, ReceiverStatus> onStart(Circuit circuit) throws NoGeneratorException {
+    public static Map<Receiver, ReceiverStatus> simulate(Circuit circuit) throws NoGeneratorException {
         if (circuit.getGenerator() == null || circuit.getReceivers() == null || circuit.getReceivers().isEmpty()) {
             throw new NoGeneratorException();
         }
@@ -41,15 +39,10 @@ public class CircuitSimulator implements ScreenListener {
         return receiverStatusToReceiver;
     }
 
-    protected static ReceiverStatus retrieveStatus(Receiver receiver, double amp) {
+    static ReceiverStatus retrieveStatus(Receiver receiver, double amp) {
         ReceiverConfiguration receiverConfiguration = receiver.getConfiguration();
         double receiverVolt = amp * receiverConfiguration.getResistance();
 
         return receiver.retrieveStatus(amp, receiverVolt);
-    }
-
-    @Override
-    public void onStop() {
-
     }
 }

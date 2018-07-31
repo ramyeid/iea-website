@@ -16,11 +16,11 @@ class Configurations {
     private static final Map<String, ReceiverType> receiverIdToType = newHashMap();
 
     static {
-        receiverIdToConfiguration.put("led", new ReceiverConfiguration(20, 1.5, 2.5, 48));
-        receiverIdToConfiguration.put("buz", new ReceiverConfiguration(30, 2, 2.5, 30));
-        receiverIdToConfiguration.put("res", new ReceiverConfiguration(30, 2, 2.5, 30));
+        receiverIdToConfiguration.put("led", new ReceiverConfiguration(0.02, 1.3, 2.5, 100));
+        receiverIdToConfiguration.put("buz", new ReceiverConfiguration(0.03, 2, 2.5, 30));
+        receiverIdToConfiguration.put("res", new ReceiverConfiguration(10, 1.5, 2, 150));
 
-        generatorIdToConfiguration.put("bat", new GeneratorConfiguration(40, 5));
+        generatorIdToConfiguration.put("bat", new GeneratorConfiguration(1, 5));
 
         receiverIdToType.put("led", ReceiverType.DIPOLE);
         receiverIdToType.put("buz", ReceiverType.DIPOLE);

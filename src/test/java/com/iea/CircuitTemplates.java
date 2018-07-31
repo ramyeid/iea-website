@@ -1,9 +1,10 @@
-package com.iea.orchestrator;
+package com.iea;
 
 import com.iea.circuit.Circuit;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;
 import com.iea.circuit.receiver.*;
+import com.iea.simulator.AmpCalculator;
 import com.iea.utils.Tuple;
 
 public class CircuitTemplates {
@@ -154,9 +155,9 @@ public class CircuitTemplates {
                 .build();
 
     }
-    public static Circuit create_series_circuit_with_three_receivers_series_receivers_receiver_low_maxvolt() {
+    public static Circuit createSeriesCircuitWithThreeReceiversWithLowMaxvolt() {
         ReceiverConfiguration ledConfig = new ReceiverConfiguration(5, 1, 4, 1);
-        ReceiverConfiguration motorConfig = new ReceiverConfiguration(5, 2, 9, 2);
+        ReceiverConfiguration motorConfig = new ReceiverConfiguration(5, 2, 8, 2);
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 20);
 
         Generator generator = new Generator("gen01", generatorConfig);

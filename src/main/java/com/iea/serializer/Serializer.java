@@ -5,11 +5,15 @@ import com.iea.circuit.Component;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
 
+import com.iea.circuit.receiver.Receiver;
 import com.iea.circuit.receiver.ReceiverFactory;
+import com.iea.circuit.receiver.ReceiverStatus;
 import com.iea.serializer.exception.NoMatchingPinFoundException;
 import com.iea.utils.Tuple;
 
 import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import static com.iea.serializer.Configurations.getGeneratorConfiguration;
@@ -64,6 +68,18 @@ public class Serializer {
             }
         }
         return circuitBuilder.build();
+    }
+
+
+    /**
+     * Function used to transform a receiver to receiverStatus map into a string
+     * with the following format: receiver1Id,receiver1Status,receiver2Id,receiver2Status, ...
+     * @param receiverStatusMap Map containing receiver to receiverStatus mappings
+     */
+    public static String deserialize(Map<Receiver,ReceiverStatus> receiverStatusMap){
+        StringJoiner deserializedStringBuilder = new StringJoiner(",");
+        receiverStatusMap.forEach((key, value) -> deserializedStringBuilder.add(key.getId() + ":" +  String.valueOf(value.getIntValue())));
+        return deserializedStringBuilder.toString();
     }
 
     /**
