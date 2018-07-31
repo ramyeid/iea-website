@@ -1,4 +1,4 @@
-/* Javascript responsible for communicating with the backend and updating the component status
+/* JavaScript responsible for communicating with the backend and updating the component status
  * It is called upon clicking the submit button and then sends components and wiring information to server
  * the server then replies with a status string with the format: component1Id:Status,component2Id:Status, ...
  * It makes the assumption that all files are present as .png in the corresponding images folder
@@ -10,7 +10,7 @@
  */
 
 submitbutton.addEventListener("click", function(){
-	
+
     let connectionsString = wiringList.toString();
     let receiversString = receiverList.toString();
     let generatorsString = generatorList.toString();
@@ -21,18 +21,18 @@ submitbutton.addEventListener("click", function(){
          data: { generators: generatorsString, receivers: receiversString, connections: connectionsString},
          success: function(data)
          {
-			let receiverStatus = parseStatusString(data);
-			if (receiverStatus != null)
+            if (data != ""){
+			    let receiverStatus = parseStatusString(data);
                 updateAllComponents(receiverStatus); //implement updating logic here
+            }
          }
     });
 
     textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
-	
+
 });
 
 function parseStatusString(statusString){
-    if (statusString == "") return null;
 	let statusMap = statusString.split(",");
 	let componentStatusMap = [];
 
@@ -44,15 +44,15 @@ function parseStatusString(statusString){
 }
 
 function updateAllComponents(componentStatusMap){
-	
+
 	for (let i = 0; i < componentStatusMap.length; i++){
 		updateComponentStatus(document.getElementById(componentStatusMap[i][0]), componentStatusMap[i][1]);
 	}
-	
+
 }
 
 function updateComponentStatus(component, componentStatus){
-	
-	component.src = component.src.substring(0, component.src.length-5) + componentStatus + ".png";	
-	
+
+	component.src = component.src.substring(0, component.src.length-5) + componentStatus + ".png";
+
 }

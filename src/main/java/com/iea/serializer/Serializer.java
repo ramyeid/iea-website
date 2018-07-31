@@ -6,7 +6,7 @@ import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
 
 import com.iea.circuit.receiver.ReceiverFactory;
-import com.iea.serializer.exception.PinDecodeError;
+import com.iea.serializer.exception.NoMatchingPinFoundException;
 import com.iea.utils.Tuple;
 
 import java.util.List;
@@ -40,17 +40,11 @@ public class Serializer {
     public static Circuit serialize(String generator, String receivers, String connections) {
         Circuit.Builder circuitBuilder = Circuit.Builder.newBuilder();
 
-        //variables used for wiring components
-        Component sourceComponent;
-        Pin sourcePin;
-        Component destinationComponent;
-        Pin destinationPin;
-
-        if (!generator.isEmpty()) { //ignore empty strings
+        if (!generator.isEmpty()) {
             circuitBuilder.setGenerator(new Generator(generator, getGeneratorConfiguration(generator.split(ID_TOKEN)[0])));
         }
 
-        if (!receivers.isEmpty()) { //ignore empty strings
+        if (!receivers.isEmpty()) {
             for (String receiverId : receivers.split(",")) {
 
                 circuitBuilder.addReceiver(ReceiverFactory
@@ -58,15 +52,13 @@ public class Serializer {
             }
         }
 
-        if (!connections.isEmpty()) { //ignore empty strings
+        if (!connections.isEmpty()) {
             String[] connectionsList = connections.split(",");
             for (int i = 0; i < connectionsList.length; i += 4) {
-                // pattern of each 4 entries in the list are as follows:
-                // sourceComponentId, sourcePin, destinationComponentId, destinationPin
-                sourceComponent = circuitBuilder.getComponentById(connectionsList[i]);
-                sourcePin = decodePin(connectionsList[i+1], sourceComponent);
-                destinationComponent = circuitBuilder.getComponentById(connectionsList[i + 2]);
-                destinationPin = decodePin(connectionsList[i+3], destinationComponent);
+                Component sourceComponent = circuitBuilder.getComponentById(connectionsList[i]);
+                Pin sourcePin = decodePin(connectionsList[i+1], sourceComponent);
+                Component destinationComponent = circuitBuilder.getComponentById(connectionsList[i + 2]);
+                Pin destinationPin = decodePin(connectionsList[i+3], destinationComponent);
                 circuitBuilder.connectComponents(new Tuple<>(sourcePin, sourceComponent),
                         new Tuple<>(destinationPin, destinationComponent));
             }
@@ -81,7 +73,7 @@ public class Serializer {
      * @return returns the concerned pin of the component
      */
 
-    private static Pin decodePin(String pinRepresentation, Component component) throws PinDecodeError {
+    private static Pin decodePin(String pinRepresentation, Component component) throws NoMatchingPinFoundException {
         if (pinRepresentation.charAt(0) == '~') {
             if (pinRepresentation.charAt(1) == '1') {
                 return component.getFirstPin();
@@ -92,7 +84,7 @@ public class Serializer {
         List<Pin> matchingPins = component.getPins().stream().filter(t -> t.getType().toString().equals(pinRepresentation)).collect(Collectors.toList());
 
         if (matchingPins.size() > 1 || matchingPins.isEmpty()) {
-            throw new PinDecodeError();
+            throw new NoMatchingPinFoundException();
         }
 
         return matchingPins.get(0);

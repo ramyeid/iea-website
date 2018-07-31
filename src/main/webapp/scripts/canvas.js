@@ -4,32 +4,36 @@ let receiverList = [];
 let generatorList = [];
 let wiring = false;
 let wiringTarget = null;
+let generatorInstantiated = false;
 let textLabel =  document.getElementById('textLabel');
 let components = document.getElementById("components");
 
 //bind click event to adding components from "components" div in .JSP
 components.addEventListener("click", function (event){
-	
-	caller = event.target
-	
+
+	caller = event.target;
 	if (caller.id == "components" || caller.id == "") return; //ignore clicking the div's background
-    if (caller.id == "wire"){
+    if (caller.dataset.type == "0"){
 		switchWiring();
 		return;
 	}
 
-	let newComponent = duplicateComponent(caller);
-	
-	if (caller.id == "bat"){
+
+	if (caller.dataset.type == "1" && !generatorInstantiated){
+	    let newComponent = duplicateComponent(caller);
         generatorList.push(newComponent.id);
+        generatorInstantiated = true;
 	}
-    else
+
+    else if (caller.dataset.type == "2"){
+        let newComponent = duplicateComponent(caller);
     	receiverList.push(newComponent.id);
-	
+    }
+
 });
 
 function duplicateComponent(caller){
-	
+
 	let newComponent = caller.cloneNode();
 	newComponent.id = caller.id + '-' + counter++;
 
@@ -44,14 +48,7 @@ function duplicateComponent(caller){
     newComponent.style.zIndex = 1000; //place object on top of screen
 	document.body.append(newComponent); //add cloned component to body
 	return newComponent;
-	
-}
 
-function checkDipolePin(object, clickx, clicky) {
-    if (clickx > object.width/2)
-        return "+";
-    else
-        return "-";
 }
 
 //function attached on right click to delete component
@@ -61,13 +58,17 @@ function deleteComponent(event) {
     caller = event.target;
     clearRelatedWiring(caller);
 
-    if (caller.id.substring(0,3) == "bat")
+    if (caller.dataset.type == "1") {
         generatorList.splice(generatorList.indexOf(caller.id),1);
-    else
+        generatorInstantiated = false;
+    }
+    else if (caller.dataset.type == "2") {
         receiverList.splice(receiverList.indexOf(caller.id),1);
+    }
 
 	event.target.remove(); //deletes component
 }
+
 
 //function used to move component on drag
 function mouseDownComponent(event) {
@@ -84,7 +85,7 @@ function mouseDownComponent(event) {
   if (wiring){
 	  performWiring(caller, shiftX, shiftY);
 	  return;}
-	
+
   caller.style.position = 'absolute';
   caller.style.zIndex = 1000; //place dragged object on top of screen
 

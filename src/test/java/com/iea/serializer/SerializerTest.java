@@ -4,12 +4,10 @@ import com.iea.circuit.Circuit;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;
 import com.iea.circuit.receiver.*;
-import com.iea.serializer.exception.PinDecodeError;
+import com.iea.serializer.exception.NoMatchingPinFoundException;
 import com.iea.utils.Tuple;
 import org.junit.Test;
 
-import static com.iea.serializer.Configurations.getGeneratorConfiguration;
-import static com.iea.serializer.Configurations.getReceiverConfiguration;
 import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
@@ -152,7 +150,7 @@ public class SerializerTest {
         assertEquals(expectedCircuit, testCircuit);
     }
 
-    @Test(expected=PinDecodeError.class)
+    @Test(expected=NoMatchingPinFoundException.class)
     public void should_throw_pin_decode_error() {
         String generator = "bat-0";
         String receivers = "led-1";
