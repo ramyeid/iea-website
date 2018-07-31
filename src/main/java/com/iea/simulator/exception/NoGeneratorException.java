@@ -1,4 +1,4 @@
-package com.iea.orchestrator.exception;
+package com.iea.simulator.exception;
 
 public class NoGeneratorException extends Exception {
 }

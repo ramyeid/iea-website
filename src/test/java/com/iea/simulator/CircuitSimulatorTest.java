@@ -1,5 +1,6 @@
-package com.iea.orchestrator;
+package com.iea.simulator;
 
+import com.iea.CircuitTemplates;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;
@@ -7,9 +8,8 @@ import com.iea.circuit.receiver.DipoleReceiver;
 import com.iea.circuit.receiver.Receiver;
 import com.iea.circuit.receiver.ReceiverConfiguration;
 import com.iea.circuit.receiver.ReceiverStatus;
-import com.iea.orchestrator.exception.NoGeneratorException;
+import com.iea.simulator.exception.NoGeneratorException;
 import com.iea.utils.Tuple;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class CircuitSimulatorTest {
 
     @Test
     public void should_ensure_retreiveStatus_returns_DAMAGED_due_to_high_voltage_for_receivers() {
-        Circuit circuit = CircuitTemplates.create_series_circuit_with_three_receivers_series_receivers_receiver_low_maxvolt();
+        Circuit circuit = CircuitTemplates.createSeriesCircuitWithThreeReceiversWithLowMaxvolt();
 
         List<Receiver> validatedComponents = Validator.validate(circuit);
         double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
@@ -128,13 +128,13 @@ public class CircuitSimulatorTest {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(led01, ReceiverStatus.OPTIMAL);
+        expected.put(led01, ReceiverStatus.LOW);
         expected.put(led02, ReceiverStatus.LOW);
         expected.put(motor01, ReceiverStatus.DAMAGED);
         expected.put(motor02, ReceiverStatus.OFF);
 
 
-        assertEquals(result, expected);
+        assertEquals(expected, result);
     }
 
     @Test
@@ -181,9 +181,7 @@ public class CircuitSimulatorTest {
 
         Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().addReceiver(led01).build();
-        CircuitSimulator circuitSimulator = new CircuitSimulator();
-        circuitSimulator.onStart(circuit);
-
+        CircuitSimulator.simulate(circuit);
     }
 }
 

@@ -1,5 +1,6 @@
 package com.iea.serializer;
 
+import com.google.common.collect.Sets;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;
@@ -8,6 +9,11 @@ import com.iea.serializer.exception.NoMatchingPinFoundException;
 import com.iea.utils.Tuple;
 import org.junit.Test;
 
+import java.util.Map;
+
+import static com.iea.serializer.Configurations.getReceiverType;
+import static com.iea.serializer.Serializer.deserialize;
+import static org.hibernate.validator.internal.util.CollectionHelper.newHashMap;
 import static org.junit.Assert.assertEquals;
 
 public class SerializerTest {
@@ -156,6 +162,42 @@ public class SerializerTest {
         String receivers = "led-1";
         String connections = "bat-0,2,led-1,5,led-1,1,bat-0,4";
         Serializer.serialize(generator, receivers, connections);
+    }
+
+
+    @Test
+    public void should_return_correct_string()
+    {
+        Map<Receiver,ReceiverStatus> givenMap = newHashMap();
+        givenMap.put(ReceiverFactory.createReceiver(getReceiverType("res"),"res-2",getReceiverConfiguration("res")), ReceiverStatus.DAMAGED);
+        givenMap.put(ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"buz-3",getReceiverConfiguration("buz")), ReceiverStatus.OFF);
+        givenMap.put(ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"led-1",getReceiverConfiguration("led")), ReceiverStatus.OPTIMAL);
+        String actualString = deserialize(givenMap);
+
+        assertEquals(Sets.newHashSet("buz-3:0", "led-1:2" ,"res-2:3"), Sets.newHashSet(actualString.split(",")));
+    }
+
+    @Test
+    public void should_return_empty_string()
+    {
+        Map<Receiver,ReceiverStatus> givenMap = newHashMap();
+        String actualString = deserialize(givenMap);
+
+        String expectedString = "";
+
+        assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void should_return_one_component_in_string()
+    {
+        Map<Receiver,ReceiverStatus> givenMap = newHashMap();
+        givenMap.put(ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"buz-3",getReceiverConfiguration("buz")), ReceiverStatus.LOW);
+        String actualString = deserialize(givenMap);
+
+        String expectedString = "buz-3:1";
+
+        assertEquals(expectedString, actualString);
     }
 
     private ReceiverConfiguration getReceiverConfiguration(String uid) {

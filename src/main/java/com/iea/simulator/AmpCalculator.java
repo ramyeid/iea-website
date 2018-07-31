@@ -1,4 +1,4 @@
-package com.iea.orchestrator;
+package com.iea.simulator;
 
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;

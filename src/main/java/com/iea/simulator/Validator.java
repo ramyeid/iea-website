@@ -1,4 +1,4 @@
-package com.iea.orchestrator;
+package com.iea.simulator;
 
 import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
@@ -6,7 +6,6 @@ import com.iea.circuit.pin.Pin;
 import com.iea.circuit.receiver.Receiver;
 import com.iea.utils.Tuple;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;

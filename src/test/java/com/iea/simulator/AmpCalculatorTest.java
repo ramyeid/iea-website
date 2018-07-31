@@ -1,5 +1,6 @@
-package com.iea.orchestrator;
+package com.iea.simulator;
 
+import com.iea.CircuitTemplates;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.receiver.Receiver;
 import org.junit.Assert;
