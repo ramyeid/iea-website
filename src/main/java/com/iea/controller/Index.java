@@ -42,8 +42,8 @@ public class Index {
         return serialize(simulatedResult);
         } catch (NoMatchingPinFoundException | NoGeneratorException e) {
             //TODO LOG ERROR HERE
-            e.printStackTrace();
-            return "ERROR: " + e.getMessage();
+            //e.printStackTrace();
+            return "ERROR";
         }
     }
 }

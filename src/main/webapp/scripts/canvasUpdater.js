@@ -12,7 +12,6 @@
 submitbutton.addEventListener('click',updateCircuit);
 
 function updateCircuit(){
-
     let connectionsString = wiringList.toString();
     let receiversString = receiverList.toString();
     let generatorsString = generatorList.toString();
@@ -34,10 +33,7 @@ function updateCircuit(){
     });
 
     textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
-
 }
-
-setTimeout(updateCircuit,1000);
 
 function parseStatusString(statusString){
 	let statusMap = statusString.split(",");
@@ -60,6 +56,8 @@ function updateAllComponents(componentStatusMap){
 
 function updateComponentStatus(component, componentStatus){
 
-	component.src = component.src.substring(0, component.src.length-5) + componentStatus + ".png";
+    let newSrc = component.src.substring(0, component.src.length-5) + componentStatus + ".png";
+    if (component.src !== newSrc)
+    	component.src = newSrc;
 
 }
