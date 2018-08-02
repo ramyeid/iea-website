@@ -17,7 +17,7 @@ class Configurations {
 
     static {
         receiverIdToConfiguration.put("led", new ReceiverConfiguration(0.02, 1.3, 2.5, 100));
-        receiverIdToConfiguration.put("buz", new ReceiverConfiguration(0.03, 2, 2.5, 30));
+        receiverIdToConfiguration.put("buz", new ReceiverConfiguration(0.03, 2, 2.5, 120));
         receiverIdToConfiguration.put("res", new ReceiverConfiguration(10, 1.5, 2, 150));
 
         generatorIdToConfiguration.put("bat", new GeneratorConfiguration(1, 5));
