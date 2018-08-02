@@ -1,5 +1,7 @@
 package com.iea;
 
+import com.iea.listener.AsynchronousScreenListenersNotifier;
+import com.iea.listener.SimulatorListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -14,6 +16,7 @@ public class Application extends SpringBootServletInitializer {
     }
 
     public static void main(String[] args) {
+        AsynchronousScreenListenersNotifier.addListener(new SimulatorListener());
         SpringApplication.run(Application.class, args);
     }
 }

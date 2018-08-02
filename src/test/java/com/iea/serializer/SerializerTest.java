@@ -12,7 +12,7 @@ import org.junit.Test;
 import java.util.Map;
 
 import static com.iea.serializer.Configurations.getReceiverType;
-import static com.iea.serializer.Serializer.deserialize;
+import static com.iea.serializer.Serializer.serialize;
 import static org.hibernate.validator.internal.util.CollectionHelper.newHashMap;
 import static org.junit.Assert.assertEquals;
 
@@ -21,24 +21,24 @@ public class SerializerTest {
     private static final String ID_TOKEN = "-";
 
     @Test
-    public void should_ensure_that_empty_strings_return_empty_circuit() {
+    public void should_ensure_that_empty_strings_return_empty_circuit() throws NoMatchingPinFoundException {
         String generator = "";
         String receivers = "";
         String connections = "";
 
-        Circuit testCircuit = Serializer.serialize(generator,receivers,connections);
+        Circuit testCircuit = Serializer.deSerialize(generator,receivers,connections);
 
         Circuit expectedCircuit = Circuit.Builder.newBuilder().build();
         assertEquals(expectedCircuit, testCircuit);
     }
 
     @Test
-    public void should_ensure_that_circuit_creates_components_with_no_wiring() {
+    public void should_ensure_that_circuit_creates_components_with_no_wiring() throws NoMatchingPinFoundException {
         String generator = "bat-0";
         String receivers = "led-1";
         String connections = "";
 
-        Circuit testCircuit = Serializer.serialize(generator,receivers,connections);
+        Circuit testCircuit = Serializer.deSerialize(generator,receivers,connections);
 
         Receiver led1 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"led-1", getReceiverConfiguration("led-1"));
         String s = "bat-0";
@@ -53,12 +53,12 @@ public class SerializerTest {
     }
 
     @Test
-    public void should_ensure_generator_only_circuit_can_be_created() {
+    public void should_ensure_generator_only_circuit_can_be_created() throws NoMatchingPinFoundException {
         String generator = "bat-0";
         String receivers = "";
         String connections = "";
 
-        Circuit testCircuit = Serializer.serialize(generator,receivers,connections);
+        Circuit testCircuit = Serializer.deSerialize(generator,receivers,connections);
         Circuit.Builder circuitBuilder = Circuit.Builder.newBuilder();
 
         Generator bat0 = new Generator("bat-0", getGeneratorConfiguration("bat-0"));
@@ -71,11 +71,11 @@ public class SerializerTest {
     }
 
     @Test
-    public void should_ensure_that_circuit_can_be_created_and_wired_correctly_with_no_generator() {
+    public void should_ensure_that_circuit_can_be_created_and_wired_correctly_with_no_generator() throws NoMatchingPinFoundException {
         String generator = "";
         String receivers = "led-1,led-2";
         String connections = "led-1,+,led-2,+,led-1,-,led-2,-";
-        Circuit testCircuit = Serializer.serialize(generator,receivers,connections);
+        Circuit testCircuit = Serializer.deSerialize(generator,receivers,connections);
 
         Receiver led1 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led-1", getReceiverConfiguration("led-1"));
         Receiver led2 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led-2", getReceiverConfiguration("led-2"));
@@ -91,11 +91,11 @@ public class SerializerTest {
     }
 
     @Test
-    public void should_ensure_that_circuit_connects_three_components_series_correctly() {
+    public void should_ensure_that_circuit_connects_three_components_series_correctly() throws NoMatchingPinFoundException {
         String generator = "bat-0";
         String receivers = "led-1,led-2";
         String connections = "bat-0,+,led-1,+,led-1,-,led-2,+,led-2,-,bat-0,-";
-        Circuit testCircuit = Serializer.serialize(generator, receivers, connections);
+        Circuit testCircuit = Serializer.deSerialize(generator, receivers, connections);
 
         Receiver led1 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led-1", getReceiverConfiguration("led-1"));
         Receiver led2 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led-2", getReceiverConfiguration("led-2"));
@@ -114,11 +114,11 @@ public class SerializerTest {
     }
 
     @Test
-    public void should_ensure_that_circuit_connects_parallel() {
+    public void should_ensure_that_circuit_connects_parallel() throws NoMatchingPinFoundException {
         String generator = "bat-0";
         String receivers = "led-1,led-2";
         String connections = "bat-0,+,led-1,+,bat-0,+,led-2,+,bat-0,-,led-1,-,bat-0,-,led-2,-";
-        Circuit testCircuit = Serializer.serialize(generator, receivers, connections);
+        Circuit testCircuit = Serializer.deSerialize(generator, receivers, connections);
 
         Receiver led1 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led-1", getReceiverConfiguration("led-1"));
         Receiver led2 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led-2", getReceiverConfiguration("led-2"));
@@ -138,11 +138,11 @@ public class SerializerTest {
     }
 
     @Test
-    public void should_ensure_redundant_wiring_does_not_affect_result() {
+    public void should_ensure_redundant_wiring_does_not_affect_result() throws NoMatchingPinFoundException {
         String generator = "bat-0";
         String receivers = "led-1";
         String connections = "bat-0,+,led-1,+,led-1,+,bat-0,+";
-        Circuit testCircuit = Serializer.serialize(generator, receivers, connections);
+        Circuit testCircuit = Serializer.deSerialize(generator, receivers, connections);
 
         Receiver led1 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"led-1", getReceiverConfiguration("led-1"));
         Generator bat0 = new Generator("bat-0", getGeneratorConfiguration("bat-0"));
@@ -157,11 +157,11 @@ public class SerializerTest {
     }
 
     @Test(expected=NoMatchingPinFoundException.class)
-    public void should_throw_pin_decode_error() {
+    public void should_throw_pin_decode_error() throws NoMatchingPinFoundException {
         String generator = "bat-0";
         String receivers = "led-1";
         String connections = "bat-0,2,led-1,5,led-1,1,bat-0,4";
-        Serializer.serialize(generator, receivers, connections);
+        Serializer.deSerialize(generator, receivers, connections);
     }
 
 
@@ -172,7 +172,7 @@ public class SerializerTest {
         givenMap.put(ReceiverFactory.createReceiver(getReceiverType("res"),"res-2",getReceiverConfiguration("res")), ReceiverStatus.DAMAGED);
         givenMap.put(ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"buz-3",getReceiverConfiguration("buz")), ReceiverStatus.OFF);
         givenMap.put(ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"led-1",getReceiverConfiguration("led")), ReceiverStatus.OPTIMAL);
-        String actualString = deserialize(givenMap);
+        String actualString = serialize(givenMap);
 
         assertEquals(Sets.newHashSet("buz-3:0", "led-1:2" ,"res-2:3"), Sets.newHashSet(actualString.split(",")));
     }
@@ -181,7 +181,7 @@ public class SerializerTest {
     public void should_return_empty_string()
     {
         Map<Receiver,ReceiverStatus> givenMap = newHashMap();
-        String actualString = deserialize(givenMap);
+        String actualString = serialize(givenMap);
 
         String expectedString = "";
 
@@ -193,7 +193,7 @@ public class SerializerTest {
     {
         Map<Receiver,ReceiverStatus> givenMap = newHashMap();
         givenMap.put(ReceiverFactory.createReceiver(ReceiverType.DIPOLE,"buz-3",getReceiverConfiguration("buz")), ReceiverStatus.LOW);
-        String actualString = deserialize(givenMap);
+        String actualString = serialize(givenMap);
 
         String expectedString = "buz-3:1";
 

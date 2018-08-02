@@ -41,7 +41,7 @@ public class Serializer {
      *
      * @return returns a circuit with the generator, receivers, and connections given
      */
-    public static Circuit serialize(String generator, String receivers, String connections) {
+    public static Circuit deSerialize(String generator, String receivers, String connections) throws NoMatchingPinFoundException {
         Circuit.Builder circuitBuilder = Circuit.Builder.newBuilder();
 
         if (!generator.isEmpty()) {
@@ -76,7 +76,7 @@ public class Serializer {
      * with the following format: receiver1Id,receiver1Status,receiver2Id,receiver2Status, ...
      * @param receiverStatusMap Map containing receiver to receiverStatus mappings
      */
-    public static String deserialize(Map<Receiver,ReceiverStatus> receiverStatusMap){
+    public static String serialize(Map<Receiver,ReceiverStatus> receiverStatusMap){
         StringJoiner deserializedStringBuilder = new StringJoiner(",");
         receiverStatusMap.forEach((key, value) -> deserializedStringBuilder.add(key.getId() + ":" +  String.valueOf(value.getIntValue())));
         return deserializedStringBuilder.toString();

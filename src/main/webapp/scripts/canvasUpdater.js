@@ -9,8 +9,9 @@
  * 3 is DAMAGED
  */
 
-submitbutton.addEventListener("click", function(){
+submitbutton.addEventListener('click',updateCircuit);
 
+function updateCircuit(){
     let connectionsString = wiringList.toString();
     let receiversString = receiverList.toString();
     let generatorsString = generatorList.toString();
@@ -21,16 +22,18 @@ submitbutton.addEventListener("click", function(){
          data: { generators: generatorsString, receivers: receiversString, connections: connectionsString},
          success: function(data)
          {
-            if (data != ""){
+            if (data.substring(0,5) === "ERROR") {
+                //alert(data);
+            }
+            else if (data !== ""){
 			    let receiverStatus = parseStatusString(data);
-                updateAllComponents(receiverStatus); //implement updating logic here
+                updateAllComponents(receiverStatus);
             }
          }
     });
 
     textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
-
-});
+}
 
 function parseStatusString(statusString){
 	let statusMap = statusString.split(",");
@@ -53,6 +56,8 @@ function updateAllComponents(componentStatusMap){
 
 function updateComponentStatus(component, componentStatus){
 
-	component.src = component.src.substring(0, component.src.length-5) + componentStatus + ".png";
+    let newSrc = component.src.substring(0, component.src.length-5) + componentStatus + ".png";
+    if (component.src !== newSrc)
+    	component.src = newSrc;
 
 }

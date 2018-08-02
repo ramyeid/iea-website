@@ -1,10 +1,8 @@
 package com.iea.circuit.receiver;
 
-import com.iea.circuit.receiver.exception.UnrecognisedReceiverTypeError;
-
 public class ReceiverFactory {
 
-    public static Receiver createReceiver(ReceiverType receiverType, String id, ReceiverConfiguration receiverConfiguration) throws UnrecognisedReceiverTypeError{
+    public static Receiver createReceiver(ReceiverType receiverType, String id, ReceiverConfiguration receiverConfiguration) {
         switch (receiverType)
         {
             case DIPOLE:
@@ -12,7 +10,7 @@ public class ReceiverFactory {
             case RESISTOR:
                 return createResistor(id, receiverConfiguration);
             default:
-                throw new UnrecognisedReceiverTypeError();
+                return createDipoleReceiver(id, receiverConfiguration);
         }
     }
 

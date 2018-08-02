@@ -12,20 +12,20 @@ let components = document.getElementById("components");
 components.addEventListener("click", function (event){
 
 	caller = event.target;
-	if (caller.id == "components" || caller.id == "") return; //ignore clicking the div's background
-    if (caller.dataset.type == "0"){
+	if (caller.id === "components" || caller.id === "") return; //ignore clicking the div's background
+    if (caller.dataset.type === "0"){
 		switchWiring();
 		return;
 	}
 
 
-	if (caller.dataset.type == "1" && !generatorInstantiated){
+	if (caller.dataset.type === "1" && !generatorInstantiated){
 	    let newComponent = duplicateComponent(caller);
         generatorList.push(newComponent.id);
         generatorInstantiated = true;
 	}
 
-    else if (caller.dataset.type == "2"){
+    else if (caller.dataset.type === "2"){
         let newComponent = duplicateComponent(caller);
     	receiverList.push(newComponent.id);
     }
@@ -58,11 +58,11 @@ function deleteComponent(event) {
     caller = event.target;
     clearRelatedWiring(caller);
 
-    if (caller.dataset.type == "1") {
+    if (caller.dataset.type === "1") {
         generatorList.splice(generatorList.indexOf(caller.id),1);
         generatorInstantiated = false;
     }
-    else if (caller.dataset.type == "2") {
+    else if (caller.dataset.type === "2") {
         receiverList.splice(receiverList.indexOf(caller.id),1);
     }
 
@@ -73,7 +73,7 @@ function deleteComponent(event) {
 //function used to move component on drag
 function mouseDownComponent(event) {
 
-  if (event.which != 1) //if not left click, ignore
+  if (event.which !== 1) //if not left click, ignore
 	return false;
 
   caller = event.target;

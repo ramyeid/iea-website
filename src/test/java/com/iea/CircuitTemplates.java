@@ -15,6 +15,7 @@ public class CircuitTemplates {
     private static ReceiverConfiguration buzzerConfig = new ReceiverConfiguration(0.03, 2, 2.5, 120);
     private static GeneratorConfiguration generatorConfig = new GeneratorConfiguration(1, 5);
 
+
     public static Circuit createSeriesCircuitWithOneRedLEDAndOneGreenLED() {
 
         Generator generator = new Generator("gen01", generatorConfig);
@@ -68,6 +69,7 @@ public class CircuitTemplates {
     }
 
     public static Circuit createSeriesCircuitWithOneGreenLED() {
+
         Generator generator = new Generator("gen01", generatorConfig);
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", greenLEDconfig);
 
@@ -79,8 +81,8 @@ public class CircuitTemplates {
                 .build();
     }
 
-
     public static Circuit createSeriesCircuitWithOneRedLEDAndTwoResistors() {
+
         Generator generator = new Generator("gen01", generatorConfig);
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
         Receiver res01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "res01", resistorConfig);
@@ -101,6 +103,7 @@ public class CircuitTemplates {
 
 
     public static Circuit createSeriesCircuitWithOneRedLEDAndOneBuzzer() {
+
         Generator generator = new Generator("gen01", generatorConfig);
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
         Receiver buz01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz01", buzzerConfig);
