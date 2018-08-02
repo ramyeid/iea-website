@@ -28,7 +28,7 @@ function updateCircuit(){
             }
             else if (data !== ""){
 			    let receiverStatus = parseStatusString(data);
-                updateAllComponents(receiverStatus); //implement updating logic here
+                updateAllComponents(receiverStatus);
             }
          }
     });
@@ -36,6 +36,8 @@ function updateCircuit(){
     textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
 
 }
+
+setTimeout(updateCircuit,1000);
 
 function parseStatusString(statusString){
 	let statusMap = statusString.split(",");
