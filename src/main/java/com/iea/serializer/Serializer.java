@@ -9,6 +9,8 @@ import com.iea.circuit.receiver.ReceiverFactory;
 import com.iea.circuit.receiver.ReceiverStatus;
 import com.iea.serializer.exception.NoMatchingPinFoundException;
 import com.iea.utils.Tuple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import static com.iea.serializer.Configurations.*;
 
 public class Serializer {
 
+    private static final Logger LOGGER = LogManager.getLogger(Serializer.class);
     private static final String ID_TOKEN = "-";
 
     /**
@@ -39,6 +42,11 @@ public class Serializer {
      * @return returns a circuit with the generator, receivers, and connections given
      */
     public static Circuit deSerialize(String generator, String receivers, String connections) throws NoMatchingPinFoundException {
+        LOGGER.info("------------ Deserializer Started ------------ ");
+        LOGGER.info("Generator: " + generator);
+        LOGGER.info("Receivers: " + receivers);
+        LOGGER.info("Connections: " + connections);
+
         Circuit.Builder circuitBuilder = Circuit.Builder.newBuilder();
 
         if (!generator.isEmpty()) {
@@ -64,6 +72,7 @@ public class Serializer {
                         new Tuple<>(destinationPin, destinationComponent));
             }
         }
+        LOGGER.info("------------ Deserializer Finished ------------ ");
         return circuitBuilder.build();
     }
 
@@ -75,9 +84,13 @@ public class Serializer {
      * @param receiverStatusMap Map containing receiver to receiverStatus mappings
      */
     public static String serialize(Map<Receiver, ReceiverStatus> receiverStatusMap) {
+        LOGGER.info("------------ Serializer Started ------------ ");
         StringJoiner deserializedStringBuilder = new StringJoiner(",");
         receiverStatusMap.forEach((key, value) -> deserializedStringBuilder.add(key.getId() + ":" + String.valueOf(value.getIntValue())));
-        return deserializedStringBuilder.toString();
+        String deserialzedStringBuilderValue = deserializedStringBuilder.toString();
+        LOGGER.info("Serialized string: " + deserialzedStringBuilderValue);
+        LOGGER.info("------------ Serializer Finished ------------ ");
+        return deserialzedStringBuilderValue;
     }
 
     /**
@@ -99,6 +112,7 @@ public class Serializer {
         List<Pin> matchingPins = component.getPins().stream().filter(t -> t.getType().toString().equals(pinRepresentation)).collect(Collectors.toList());
 
         if (matchingPins.size() > 1 || matchingPins.isEmpty()) {
+            LOGGER.error("No matching pin found for " + pinRepresentation);
             throw new NoMatchingPinFoundException(pinRepresentation);
         }
 

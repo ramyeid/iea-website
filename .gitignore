@@ -639,6 +639,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# logs
+src/main/resources/**/*.log
+
 ### Gradle ###
 
 # Ignore Gradle GUI config
