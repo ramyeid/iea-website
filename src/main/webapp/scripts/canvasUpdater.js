@@ -9,7 +9,9 @@
  * 3 is DAMAGED
  */
 
-submitbutton.addEventListener("click", function(){
+submitbutton.addEventListener('click',updateCircuit);
+
+function updateCircuit(){
 
     let connectionsString = wiringList.toString();
     let receiversString = receiverList.toString();
@@ -21,10 +23,10 @@ submitbutton.addEventListener("click", function(){
          data: { generators: generatorsString, receivers: receiversString, connections: connectionsString},
          success: function(data)
          {
-            if (data.substring(0,5) == "ERROR") {
-                alert(data);
+            if (data.substring(0,5) === "ERROR") {
+                //alert(data);
             }
-            else if (data != ""){
+            else if (data !== ""){
 			    let receiverStatus = parseStatusString(data);
                 updateAllComponents(receiverStatus); //implement updating logic here
             }
@@ -33,7 +35,7 @@ submitbutton.addEventListener("click", function(){
 
     textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
 
-});
+}
 
 function parseStatusString(statusString){
 	let statusMap = statusString.split(",");

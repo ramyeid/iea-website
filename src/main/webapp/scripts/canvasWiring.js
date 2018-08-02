@@ -21,17 +21,17 @@ function switchWiring() {
 
 function clearRelatedWiring(caller) {
 	
-    for(var i=0; i<wiringList.length;i++)
+    for(let i=0; i<wiringList.length;i++)
     {
-      if (wiringList[i][0][0] == caller.id || wiringList[i][1][0] == caller.id)
+      if (wiringList[i][0][0] === caller.id || wiringList[i][1][0] === caller.id)
       {
         wiringList[i].length = 0;
       }
     }
 
-    for(var i=wiringList.length-1; i>=0;i--)
+    for(let i=wiringList.length-1; i>=0;i--)
     {
-      if (wiringList[i].length == 0)
+      if (wiringList[i].length === 0)
         wiringList.splice(i,1);
     }
 	
@@ -43,7 +43,7 @@ function performWiring(caller, shiftX, shiftY){
 	        let pin = checkPin(caller, shiftX, shiftY);
 	        wiringTarget = [caller.id,pin];
 	        return false; }
-	    else if (wiringTarget[0] == caller.id) {
+	    else if (wiringTarget[0] === caller.id) {
 	        return false;
 	    }
 	    else {
