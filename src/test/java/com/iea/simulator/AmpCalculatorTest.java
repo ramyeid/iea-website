@@ -11,42 +11,27 @@ import java.util.List;
 public class AmpCalculatorTest {
 
     @Test
-    public void should_ensure_amp_is_calculated_correctly_in_series_circuit(){
-        Circuit circuit=CircuitTemplates.create_circuit_with_three_receivers_series();
+    public void should_ensure_amp_is_calculated_correctly_in_series_circuit() {
+        Circuit circuit = CircuitTemplates.createSeriesCircuitWithThreeBuzzers();
         List<Receiver> receiversInClosedCircuit = Validator.validate(circuit);
         double ampResult = AmpCalculator.calculateAmp(circuit.getGenerator(), receiversInClosedCircuit);
-        double ampExpected=2.5;
+        double ampExpected = 0.0138;
 
-        Assert.assertEquals(ampExpected,ampResult,0.1);
+        Assert.assertEquals(ampExpected, ampResult, 0.001);
     }
 
     /**
-     * the actual amp of the circuit should be 25 amps, the AmpCalculator will output 2.5 amps
+     * the actual amp of the circuit should be 0.15 amps, the AmpCalculator will output 0.016 amps
      * due to the assumption that all circuits are series
      * because the parallel use case is not present in this simulation
      */
     @Test
     public void should_ensure_amp_is_calculated_correctly_parallel_circuit(){
-        Circuit circuit=CircuitTemplates.create_circuit_with_three_receivers_parallel();
+        Circuit circuit=CircuitTemplates.createSeriesCircuitWithTwoRedLEDsAndOneGreenLEDInParallel();
         List<Receiver> receiversInClosedCircuit = Validator.validate(circuit);
         double ampResult = AmpCalculator.calculateAmp(circuit.getGenerator(), receiversInClosedCircuit);
-        double ampExpected=2.5;
-        Assert.assertEquals(ampExpected,ampResult,0.1);
-    }
-
-    /**
-     * the actual amp of the circuit should be 25 amps, the AmpCalculator will output 2.5 amps
-     * due to the assumption that all circuits are series
-     * because the parallel use case is not present in this simulation
-     */
-
-    @Test
-    public void should_ensure_amp_is_calculated_correctly_series_and_parallel_circuit(){
-        Circuit circuit=CircuitTemplates.create_circuit_with_two_receivers_series_one_parallel();
-        List<Receiver> receiversInClosedCircuit = Validator.validate(circuit);
-        double ampResult = AmpCalculator.calculateAmp(circuit.getGenerator(), receiversInClosedCircuit);
-        double ampExpected=2.5;
-        Assert.assertEquals(ampExpected,ampResult,0.1);
+        double ampExpected=0.016;
+        Assert.assertEquals(ampExpected,ampResult,0.001);
     }
 
 
