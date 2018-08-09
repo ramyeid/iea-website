@@ -8,5 +8,5 @@ import java.io.IOException;
 
 public interface ScreenListener {
 
-    void onSubmit(Circuit circuit, SseEmitter emitter) throws NoGeneratorException, IOException;
+    void onSubmit(Circuit circuit, SseEmitter emitter) throws Exception;
 }

@@ -22,7 +22,7 @@ public class AsynchronousScreenListenersNotifier {
         screenListeners.parallelStream().forEach(t-> {
             try {
                 t.onSubmit(circuit, emitter);
-            } catch (NoGeneratorException | IOException e) {
+            } catch (Exception e) {
                 //TODO LOG ERROR
                 e.printStackTrace();
             }

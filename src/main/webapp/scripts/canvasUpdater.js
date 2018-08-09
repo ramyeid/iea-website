@@ -9,30 +9,40 @@
  * 3 is DAMAGED
  */
 
-submitbutton.addEventListener('click',updateCircuit);
+submitbutton.addEventListener('click',submitCircuit);
 
-function updateCircuit(){
+var notificationSource = new EventSource("/canvas/notifications");
+notificationSource.onmessage = function(event) {
+    updateCircuit(event.data);
+};
+
+notificationSource.onerror = function(event) {
+    alert("Timeout");
+};
+
+function submitCircuit(){
     let connectionsString = wiringList.toString();
     let receiversString = receiverList.toString();
     let generatorsString = generatorList.toString();
 
     $.ajax({
          type: 'POST',
-         url: "/canvas/update",
-         data: { generators: generatorsString, receivers: receiversString, connections: connectionsString},
-         success: function(data)
-         {
-            if (data.substring(0,5) === "ERROR") {
-                //alert(data);
-            }
-            else if (data !== ""){
-			    let receiverStatus = parseStatusString(data);
-                updateAllComponents(receiverStatus);
-            }
-         }
+         url: "/canvas/submit",
+         data: { generators: generatorsString, receivers: receiversString, connections: connectionsString}
     });
 
     textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
+}
+
+function updateCircuit(statusString)
+{
+    if (statusString.substring(0,5) === "ERROR") {
+        //alert(data);
+    }
+    else if (statusString !== ""){
+        let receiverStatus = parseStatusString(statusString);
+        updateAllComponents(receiverStatus);
+    }
 }
 
 function parseStatusString(statusString){
