@@ -1,4 +1,4 @@
-package com.iea.circuit.receiver;
+package com.iea.circuit.receiver.config;
 
 public enum ReceiverStatus {
 
@@ -6,7 +6,7 @@ public enum ReceiverStatus {
 
     private int value;
 
-    private ReceiverStatus(int value) {
+    ReceiverStatus(int value) {
         this.value = value;
     }
 

@@ -9,8 +9,8 @@ import java.util.Objects;
 public abstract class Component {
 
     protected final String id;
-    private final Pin firstPin;
-    private final Pin secondPin;
+    protected final Pin firstPin;
+    protected final Pin secondPin;
 
     public Component(String id, Pin firstPin, Pin secondPin) {
         this.id = id;
@@ -43,14 +43,10 @@ public abstract class Component {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, firstPin, secondPin);
+    public final int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
-    public String toString() {
-        return "Component{" +
-                "id='" + id + '\'' +
-                '}';
-    }
+    public abstract String toString();
 }

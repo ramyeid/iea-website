@@ -1,4 +1,4 @@
-package com.iea.circuit.receiver;
+package com.iea.circuit.receiver.config;
 
 import com.iea.circuit.Component;
 import com.iea.circuit.pin.Pin;
@@ -9,7 +9,7 @@ public abstract class Receiver extends Component {
 
     protected final ReceiverConfiguration configuration;
 
-    Receiver(String id, ReceiverConfiguration receiverConfiguration, Pin firstPin, Pin secondPin) {
+    protected Receiver(String id, ReceiverConfiguration receiverConfiguration, Pin firstPin, Pin secondPin) {
         super(id, firstPin, secondPin);
         this.configuration = receiverConfiguration;
     }
@@ -27,10 +27,5 @@ public abstract class Receiver extends Component {
         if (!super.equals(o)) return false;
         Receiver receiver = (Receiver) o;
         return Objects.equals(configuration, receiver.configuration);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), configuration);
     }
 }

@@ -1,5 +1,8 @@
 package com.iea.circuit.receiver;
 
+import com.iea.circuit.receiver.config.Receiver;
+import com.iea.circuit.receiver.config.ReceiverConfiguration;
+import com.iea.circuit.receiver.config.ReceiverType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -7,21 +10,24 @@ import static org.junit.Assert.assertEquals;
 public class ReceiverFactoryTest {
 
     @Test
-    public void should_create_dipole_receiver()  {
-        ReceiverConfiguration testConfig = new ReceiverConfiguration(5,5,5,5);
+    public void should_create_dipole_receiver() {
+        ReceiverConfiguration testConfig = new ReceiverConfiguration(5, 5, 5, 5);
         String testId = "led-1";
-        Receiver actualReceiver = ReceiverFactory.createReceiver(ReceiverType.DIPOLE,testId, testConfig);
         DipoleReceiver expectedReceiver = new DipoleReceiver(testId, testConfig);
-        assertEquals(actualReceiver, expectedReceiver);
+
+        Receiver actualReceiver = ReceiverFactory.createReceiver(testId, ReceiverType.DIPOLE, testConfig);
+
+        assertEquals(expectedReceiver, actualReceiver);
     }
 
     @Test
-    public void should_create_resistor_receiver()  {
-        ReceiverConfiguration testConfig = new ReceiverConfiguration(5,5,5,5);
+    public void should_create_resistor_receiver() {
+        ReceiverConfiguration testConfig = new ReceiverConfiguration(5, 5, 5, 5);
         String testId = "res-1";
-        Receiver actualReceiver = ReceiverFactory.createReceiver(ReceiverType.RESISTOR,testId, testConfig);
         Resistor expectedReceiver = new Resistor(testId, testConfig);
+
+        Receiver actualReceiver = ReceiverFactory.createReceiver(testId, ReceiverType.RESISTOR, testConfig);
+
         assertEquals(actualReceiver, expectedReceiver);
     }
-
 }

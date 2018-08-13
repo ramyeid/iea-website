@@ -1,10 +1,9 @@
 package com.iea.simulator;
 
 import com.iea.circuit.Circuit;
-import com.iea.circuit.receiver.Receiver;
-import com.iea.circuit.receiver.ReceiverConfiguration;
-import com.iea.circuit.receiver.ReceiverStatus;
-import com.iea.simulator.exception.NoGeneratorException;
+import com.iea.circuit.receiver.config.Receiver;
+import com.iea.circuit.receiver.config.ReceiverConfiguration;
+import com.iea.circuit.receiver.config.ReceiverStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,7 +48,7 @@ public class CircuitSimulator {
         return receiverStatusToReceiver;
     }
 
-    static ReceiverStatus retrieveStatus(Receiver receiver, double amp) {
+    private static ReceiverStatus retrieveStatus(Receiver receiver, double amp) {
         ReceiverConfiguration receiverConfiguration = receiver.getConfiguration();
         double receiverVolt = amp * receiverConfiguration.getResistance();
         LOGGER.info("Receiver: " + receiver + " - Volt:" + receiverVolt);

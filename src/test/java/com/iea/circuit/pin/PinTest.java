@@ -5,55 +5,55 @@ import com.iea.circuit.generator.GeneratorConfiguration;
 import com.iea.utils.Tuple;
 import org.junit.Test;
 
+import static com.iea.circuit.generator.GeneratorFactory.createGenerator;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
+
 public class PinTest {
 
-    GeneratorConfiguration generatorConfig = new GeneratorConfiguration(40,6);
+    private static final GeneratorConfiguration GENERATOR_CONFIGURATION = new GeneratorConfiguration(40, 6);
 
     @Test
-    public void should_create_two_identical_pins_correctly_and_compare_them_true() {
+    public void should_equals_between_two_pins_with_same_connections_and_type_be_equal() {
+        Generator generator0 = createGenerator("gen0", GENERATOR_CONFIGURATION);
+        Generator generator1 = createGenerator("gen1", GENERATOR_CONFIGURATION);
+        Generator generator2 = createGenerator("gen2", GENERATOR_CONFIGURATION);
 
-        Pin pin0 = PinFactory.createPositivePin();
-        Pin pin1 = PinFactory.createPositivePin();
-        assert (pin0.equals(pin1));
+        Pin.connectComponents(new Tuple<>(generator0.getNegativePin(), generator0), new Tuple<>(generator1.getNegativePin(), generator1));
+        Pin.connectComponents(new Tuple<>(generator2.getNegativePin(), generator2), new Tuple<>(generator1.getNegativePin(), generator1));
 
+        assertTrue(generator0.getNegativePin().equals(generator2.getNegativePin()));
     }
 
     @Test
-    public void should_create_two_identical_pins_form_different_generators_and_compare_them_true() {
+    public void should_equals_between_two_pins_with_different_connections_and_same_type_return_false() {
+        Generator generator0 = createGenerator("gen0", GENERATOR_CONFIGURATION);
+        Generator generator1 = createGenerator("gen1", GENERATOR_CONFIGURATION);
+        Generator generator2 = createGenerator("gen2", GENERATOR_CONFIGURATION);
 
-        Generator generator0 = new Generator("gen0", generatorConfig);
-        Generator generator1 = new Generator("gen1", generatorConfig);
-        Generator generator2 = new Generator("gen2", generatorConfig);
-        Pin.connectComponents(new Tuple<>(generator0.getNegativePin(),generator0), new Tuple<>(generator1.getNegativePin(),generator1));
-        Pin.connectComponents(new Tuple<>(generator2.getNegativePin(),generator2), new Tuple<>(generator1.getNegativePin(),generator1));
-        assert (generator0.getNegativePin().equals(generator2.getNegativePin()));
+        Pin.connectComponents(new Tuple<>(generator0.getNegativePin(), generator0), new Tuple<>(generator1.getNegativePin(), generator1));
+        Pin.connectComponents(new Tuple<>(generator2.getNegativePin(), generator2), new Tuple<>(generator1.getPositivePin(), generator1));
+
+        assertFalse(generator0.getNegativePin().equals(generator2.getNegativePin()));
     }
 
     @Test
-    public void should_create_two_different_pins_form_different_generators_and_compare_them_false() {
+    public void should_equals_between_two_pins_with_different_type_return_false() {
+        Generator generator0 = createGenerator("gen0", GENERATOR_CONFIGURATION);
 
-        Generator generator0 = new Generator("gen0", generatorConfig);
-        Generator generator1 = new Generator("gen1", generatorConfig);
-        Generator generator2 = new Generator("gen2", generatorConfig);
-        Pin.connectComponents(new Tuple<>(generator0.getNegativePin(),generator0), new Tuple<>(generator1.getNegativePin(),generator1));
-        Pin.connectComponents(new Tuple<>(generator2.getNegativePin(),generator2), new Tuple<>(generator1.getPositivePin(),generator1));
-        assert !(generator0.getNegativePin().equals(generator2.getNegativePin()));
+        assertFalse(generator0.getNegativePin().equals(generator0.getPositivePin()));
     }
 
     @Test
-    public void should_create_two_different_pins_form_same_generator_with_only_different_type_and_compare_them_false() {
+    public void should_equals_between_two_pins_with_same_connections_and_different_type_return_false() {
+        Generator generator0 = createGenerator("gen0", GENERATOR_CONFIGURATION);
+        Generator generator1 = createGenerator("gen1", GENERATOR_CONFIGURATION);
+        Generator generator2 = createGenerator("gen2", GENERATOR_CONFIGURATION);
 
-        Generator generator0 = new Generator("gen0", generatorConfig);
-        assert !(generator0.getNegativePin().equals(generator0.getPositivePin()));
-    }
+        Pin.connectComponents(new Tuple<>(generator0.getNegativePin(), generator0), new Tuple<>(generator1.getNegativePin(), generator1));
+        Pin.connectComponents(new Tuple<>(generator2.getPositivePin(), generator2), new Tuple<>(generator1.getNegativePin(), generator1));
 
-    @Test
-    public void should_create_two_different_pins_form_same_generator_and_compare_them_false() {
-        Generator generator0 = new Generator("gen0", generatorConfig);
-        Generator generator1 = new Generator("gen1", generatorConfig);
-
-        Pin.connectComponents(new Tuple<>(generator0.getNegativePin(),generator0), new Tuple<>(generator1.getNegativePin(),generator1));
-        assert !(generator0.getNegativePin().equals(generator0.getPositivePin()));
+        assertFalse(generator0.getNegativePin().equals(generator2.getPositivePin()));
     }
 
 }

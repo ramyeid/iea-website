@@ -2,12 +2,10 @@ package com.iea.serializer;
 
 import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
-import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
-import com.iea.circuit.receiver.Receiver;
 import com.iea.circuit.receiver.ReceiverFactory;
-import com.iea.circuit.receiver.ReceiverStatus;
-import com.iea.serializer.exception.NoMatchingPinFoundException;
+import com.iea.circuit.receiver.config.Receiver;
+import com.iea.circuit.receiver.config.ReceiverStatus;
 import com.iea.utils.Tuple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +15,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import static com.iea.circuit.generator.GeneratorFactory.createGenerator;
 import static com.iea.serializer.Configurations.*;
 
 public class Serializer {
@@ -50,14 +49,14 @@ public class Serializer {
         Circuit.Builder circuitBuilder = Circuit.Builder.newBuilder();
 
         if (!generator.isEmpty()) {
-            circuitBuilder.setGenerator(new Generator(generator, getGeneratorConfiguration(generator.split(ID_TOKEN)[0])));
+            circuitBuilder.setGenerator(createGenerator(generator, getGeneratorConfiguration(generator.split(ID_TOKEN)[0])));
         }
 
         if (!receivers.isEmpty()) {
             for (String receiverId : receivers.split(",")) {
 
                 circuitBuilder.addReceiver(ReceiverFactory
-                        .createReceiver(getReceiverType(receiverId.split(ID_TOKEN)[0]), receiverId, getReceiverConfiguration(receiverId.split(ID_TOKEN)[0])));
+                        .createReceiver(receiverId, getReceiverType(receiverId.split(ID_TOKEN)[0]), getReceiverConfiguration(receiverId.split(ID_TOKEN)[0])));
             }
         }
 

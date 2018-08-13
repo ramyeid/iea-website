@@ -2,8 +2,8 @@ package com.iea.serializer;
 
 
 import com.iea.circuit.generator.GeneratorConfiguration;
-import com.iea.circuit.receiver.ReceiverConfiguration;
-import com.iea.circuit.receiver.ReceiverType;
+import com.iea.circuit.receiver.config.ReceiverConfiguration;
+import com.iea.circuit.receiver.config.ReceiverType;
 
 import java.util.Map;
 
