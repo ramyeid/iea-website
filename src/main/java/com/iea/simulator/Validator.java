@@ -5,6 +5,8 @@ import com.iea.circuit.Component;
 import com.iea.circuit.pin.Pin;
 import com.iea.circuit.receiver.Receiver;
 import com.iea.utils.Tuple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +18,8 @@ import static java.util.stream.Collectors.toList;
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 public class Validator {
+
+    private static final Logger LOGGER = LogManager.getLogger(Validator.class);
 
     /**
      * This function returns the list of components that are included in a closed circuit.
@@ -29,15 +33,21 @@ public class Validator {
      * @return List of receivers in closed circuit.
      */
     public static List<Receiver> validate(Circuit circuit) {
+        LOGGER.info("------------ CircuitValidator Started ------------ ");
+
         if (circuit.getGenerator() == null || circuit.getReceivers() == null || circuit.getReceivers().isEmpty()) {
+            LOGGER.info("Circuit is empty.\n Returning an empty list");
             return newArrayList();
         }
 
         Set<Component> reachableFromPositive = retrieveComponentsReachableFrom(POSITIVE, circuit.getGenerator().getPositivePin().getConnections());
         Set<Component> reachableFromNegative = retrieveComponentsReachableFrom(NEGATIVE, circuit.getGenerator().getNegativePin().getConnections());
 
-        //Getting the intersection of both reachableFromPositive and reachableFromNegative
-        return reachableFromNegative.stream().filter(reachableFromPositive::contains).map(t -> (Receiver) t).collect(toList());
+        List<Receiver> receiversInClosedCircuit = reachableFromNegative.stream().filter(reachableFromPositive::contains).map(t -> (Receiver) t).collect(toList());
+
+        LOGGER.info("------------ receiversInClosedCircuit: " + receiversInClosedCircuit + " ------------ ");
+        LOGGER.info("------------ CircuitValidator Ended ------------ ");
+        return receiversInClosedCircuit;
     }
 
     private static Set<Component> retrieveComponentsReachableFrom(Pin.Type pinType, List<Tuple<Pin, Component>> generatorConnections) {

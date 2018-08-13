@@ -48,4 +48,11 @@ public abstract class Component {
     public int hashCode() {
         return Objects.hash(id, firstPin, secondPin);
     }
+
+    @Override
+    public String toString() {
+        return "Component{" +
+                "id='" + id + '\'' +
+                '}';
+    }
 }

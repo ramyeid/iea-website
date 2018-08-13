@@ -1,8 +1,11 @@
 package com.iea.controller;
 
+import com.iea.Application;
 import com.iea.listener.AsynchronousScreenListenersNotifier;
 import com.iea.utils.CustomSseEmitter;
 import com.iea.utils.EmitterException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,8 @@ import java.util.concurrent.CompletableFuture;
 @Controller
 @RequestMapping("/")
 public class Index {
+
+    private static final Logger LOGGER = LogManager.getLogger(Index.class);
 
     @RequestMapping
     public String index(Model model) {
@@ -37,7 +42,7 @@ public class Index {
                     try {
                         AsynchronousScreenListenersNotifier.onSubmit(generators, receivers, connections, userSseEmitter);
                     } catch (EmitterException emitterException) {
-                        //TODO LOG HERE.
+                        LOGGER.error("Emitter Exception: ", emitterException);
                         model.addAttribute("ERROR", emitterException.getMessage());
                     }
                 });
