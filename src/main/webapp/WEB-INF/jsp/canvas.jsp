@@ -19,6 +19,36 @@
   </div>
 </head>
 <body>
+  <div style="
+      display: inline-block;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 70vw;
+      height: 70vh;
+      margin: auto;
+      background-color: rgba(185, 185, 185, 0.3);
+      visibility: hidden;" id="python">
+      <textarea style="
+        display: inline-block;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 50vw;
+        height: 50vh;
+        margin: auto;
+        resize: none;" id = "pythonCode" cols = "50" rows = "20" value=""></textarea>
+      <input style="
+        display: inline-block;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        margin: auto;" id="submitPython" type="button" value="Submit Python Code">
+  </div>
   <div id="main" style=" height : 80%; width:80%;">
       <img id = "rpi" src='/images/rpi/rpi.png'/>
   </div>
@@ -56,11 +86,28 @@
 
 <footer style=" position:absolute; bottom:0; width:100%; height:10%; background:#6cf;">
   <div  id="Submit">
-    <input type="button" id="submitbutton" value="Submit">
-    <label id="textLabel"></label>
+    <table>
+        <tr>
+            <td>
+                <input type="button" id="submitbutton" value="Submit">
+            </td>
+            <td>
+                <label id="textLabel"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="button" id="showPython" value="Show Python Code"/>
+            </td>
+            <td>
+                <input type="button" id="hidePython" value="Hide Python Code"/>
+            </td>
+        </tr>
+    </table>
   </div>
 </footer>
 <script src="scripts/canvas.js"></script>
 <script src="scripts/canvasWiring.js"></script>
 <script src="scripts/canvasUpdater.js"></script>
+<script src="scripts/canvasPythonWriter.js"></script>
 </html>

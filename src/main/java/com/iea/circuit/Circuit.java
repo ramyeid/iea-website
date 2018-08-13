@@ -8,9 +8,7 @@ import com.iea.utils.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 public class Circuit {
