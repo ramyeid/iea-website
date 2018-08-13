@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -29,7 +30,6 @@ import java.util.concurrent.CompletableFuture;
 public class Index {
 
     private static final Logger LOGGER = LogManager.getLogger(Index.class);
-    private static final String PATH_TO_PYTHON_LIB = "src" + File.separator + "main" + File.separator + "resources" + File.separator + "python-lib";
 
     @RequestMapping
     public String index(Model model) {
@@ -51,7 +51,9 @@ public class Index {
     @RequestMapping("/canvas/savePythonFile")
     public void onSavePython(@RequestParam("pythonCode") String pythonCode, Model model) {
         try {
-            Files.write(Paths.get(PATH_TO_PYTHON_LIB + File.separator + "pythonCode.py"), pythonCode.getBytes(), StandardOpenOption.CREATE);
+            String fileName = "pythonCode.py";
+            String pathToNewPythonFile = new StringJoiner(File.separator).add("src").add("main").add("resources").add("python-lib").add(fileName).toString();
+            Files.write(Paths.get(pathToNewPythonFile), pythonCode.getBytes(), StandardOpenOption.CREATE);
         } catch (IOException e) {
             LOGGER.error("Error while saving the python file");
             model.addAttribute("ERROR", e.getMessage());
@@ -67,5 +69,4 @@ public class Index {
             model.addAttribute("ERROR", emitterException.getMessage());
         }
     }
-
 }
