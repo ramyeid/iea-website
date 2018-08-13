@@ -5,7 +5,8 @@ import com.iea.serializer.exception.NoMatchingPinFoundException;
 import com.iea.utils.CustomSseEmitter;
 import com.iea.utils.EmitterException;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -23,15 +24,20 @@ public class AsynchronousScreenListenersNotifier {
 
     public static void onSubmit(String generators, String receivers, String connections, CustomSseEmitter emitter) throws EmitterException {
         try {
+            List<CompletableFuture<Void>> listenersThreads = new ArrayList<>();
+
             Circuit userCircuit = deSerialize(generators, receivers, connections);
-            screenListeners.forEach(t -> asyncRunInExceptionHandling(() -> t.onSubmit(userCircuit, emitter)));
+            screenListeners.forEach(t -> listenersThreads.add(asyncRunInExceptionHandling(() -> t.onSubmit(userCircuit, emitter))));
+
+            listenersThreads.forEach(CompletableFuture::join);
+            emitter.end();
         } catch (NoMatchingPinFoundException e) {
             emitter.send(e);
         }
     }
 
-    private static void asyncRunInExceptionHandling(EmitterExceptionThrowingSupplier supplier) {
-        CompletableFuture.runAsync(supplier::get);
+    private static CompletableFuture<Void> asyncRunInExceptionHandling(EmitterExceptionThrowingSupplier supplier) {
+        return CompletableFuture.runAsync(supplier::get);
     }
 
     @FunctionalInterface

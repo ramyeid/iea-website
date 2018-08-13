@@ -21,6 +21,15 @@ public class CustomSseEmitter extends SseEmitter {
     public void send(Exception exception) throws EmitterException {
         try {
             super.send(onErrorMessage(exception));
+            end();
+        } catch (IOException ioException) {
+            throw new EmitterException(ioException);
+        }
+    }
+
+    public void end() throws EmitterException {
+        try {
+            super.send("end");
         } catch (IOException ioException) {
             throw new EmitterException(ioException);
         }
@@ -29,4 +38,6 @@ public class CustomSseEmitter extends SseEmitter {
     private static String onErrorMessage(Exception e) {
         return "Error: " + e.getMessage();
     }
+
+
 }

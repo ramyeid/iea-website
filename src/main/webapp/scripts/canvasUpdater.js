@@ -11,35 +11,33 @@
 
 submitbutton.addEventListener('click',submitCircuit);
 
-var notificationSource = new EventSource("/canvas/notifications");
-notificationSource.onmessage = function(event) {
-    updateCircuit(event.data);
-};
+function submitCircuit() {
+    let connectionsAsString = wiringList.toString();
+    let receiversAsString = receiverList.toString();
+    let generatorsAsString = generatorList.toString();
 
-notificationSource.onerror = function(event) {
-    alert("Timeout");
-};
+    var notificationSource = new EventSource("/canvas/submit?generators="+generatorsAsString+"&receivers="+receiversAsString+"&connections="+connectionsAsString);
 
-function submitCircuit(){
-    let connectionsString = wiringList.toString();
-    let receiversString = receiverList.toString();
-    let generatorsString = generatorList.toString();
+    notificationSource.onmessage = function(event) {
+        if (event.data.substring(0,5) === "Error") {
+            alert(event.data);
+        }
+        else if (event.data.substring(0,3) === "end") {
+            notificationSource.close();
+            notificationSource = NULL;
+        }
+        updateCircuit(event.data);
+    };
 
-    $.ajax({
-         type: 'POST',
-         url: "/canvas/submit",
-         data: { generators: generatorsString, receivers: receiversString, connections: connectionsString}
-    });
+    notificationSource.onerror = function(event) {
+        alert("Timeout");
+    };
 
     textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
 }
 
-function updateCircuit(statusString)
-{
-    if (statusString.substring(0,5) === "ERROR") {
-        //alert(data);
-    }
-    else if (statusString !== ""){
+function updateCircuit(statusString) {
+    if (statusString !== ""){
         let receiverStatus = parseStatusString(statusString);
         updateAllComponents(receiverStatus);
     }
@@ -61,7 +59,6 @@ function updateAllComponents(componentStatusMap){
 	for (let i = 0; i < componentStatusMap.length; i++){
 		updateComponentStatus(document.getElementById(componentStatusMap[i][0]), componentStatusMap[i][1]);
 	}
-
 }
 
 function updateComponentStatus(component, componentStatus){
@@ -69,5 +66,4 @@ function updateComponentStatus(component, componentStatus){
     let newSrc = component.src.substring(0, component.src.length-5) + componentStatus + ".png";
     if (component.src !== newSrc)
     	component.src = newSrc;
-
 }
