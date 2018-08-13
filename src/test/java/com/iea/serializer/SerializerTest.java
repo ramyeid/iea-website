@@ -59,11 +59,10 @@ public class SerializerTest {
         String connections = "";
 
         Circuit testCircuit = Serializer.deSerialize(generator,receivers,connections);
-        Circuit.Builder circuitBuilder = Circuit.Builder.newBuilder();
 
         Generator bat0 = new Generator("bat-0", getGeneratorConfiguration("bat-0"));
 
-        Circuit expectedCircuit = circuitBuilder
+        Circuit expectedCircuit = Circuit.Builder.newBuilder()
                 .setGenerator(bat0)
                 .build();
 

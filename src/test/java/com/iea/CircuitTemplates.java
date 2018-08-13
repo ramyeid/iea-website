@@ -22,7 +22,6 @@ public class CircuitTemplates {
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", greenLEDconfig);
 
-        Circuit.Builder.newBuilder();
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -37,7 +36,6 @@ public class CircuitTemplates {
         Generator generator = new Generator("gen01", generatorConfig);
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
         Receiver res01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "res01", resistorConfig);
-        Circuit.Builder.newBuilder();
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(res01)
@@ -55,7 +53,6 @@ public class CircuitTemplates {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", redLEDconfig);
         Receiver led03 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led03", greenLEDconfig);
 
-        Circuit.Builder.newBuilder();
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -73,7 +70,6 @@ public class CircuitTemplates {
         Generator generator = new Generator("gen01", generatorConfig);
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", greenLEDconfig);
 
-        Circuit.Builder.newBuilder();
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
@@ -87,8 +83,6 @@ public class CircuitTemplates {
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
         Receiver res01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "res01", resistorConfig);
         Receiver res02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "res02", resistorConfig);
-
-        Circuit.Builder.newBuilder();
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
@@ -108,7 +102,6 @@ public class CircuitTemplates {
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
         Receiver buz01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz01", buzzerConfig);
 
-        Circuit.Builder.newBuilder();
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(buz01)
@@ -124,7 +117,6 @@ public class CircuitTemplates {
         Receiver buz02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz02", buzzerConfig);
         Receiver buz03 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz03", buzzerConfig);
 
-        Circuit.Builder.newBuilder();
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(buz01)
                 .addReceiver(buz02)
@@ -144,7 +136,6 @@ public class CircuitTemplates {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", redLEDconfig);
         Receiver led03 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led03", greenLEDconfig);
 
-        Circuit.Builder.newBuilder();
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)

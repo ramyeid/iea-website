@@ -10,7 +10,7 @@ import static java.util.Arrays.asList;
 
 public abstract class Component {
 
-    private final String id;
+    protected final String id;
     private final Pin firstPin;
     private final Pin secondPin;
 

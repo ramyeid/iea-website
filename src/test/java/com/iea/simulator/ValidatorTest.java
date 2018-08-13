@@ -29,7 +29,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -65,7 +64,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver mot01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -100,7 +98,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -125,7 +122,7 @@ public class ValidatorTest {
         GeneratorConfiguration generatorConfig = new GeneratorConfiguration(10, 10);
 
         Generator generator = new Generator("gen01", generatorConfig);
-        Circuit.Builder.newBuilder();
+
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
@@ -152,7 +149,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -189,7 +185,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -225,7 +220,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -255,7 +249,6 @@ public class ValidatorTest {
         Generator generator = new Generator("gen01", generatorConfig);
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getSecondPin(), led01))
@@ -284,7 +277,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -320,7 +312,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -350,7 +341,6 @@ public class ValidatorTest {
         Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", ledConfig);
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -379,7 +369,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -413,7 +402,6 @@ public class ValidatorTest {
         Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", ledConfig);
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(motor01)
@@ -452,7 +440,6 @@ public class ValidatorTest {
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
         Receiver motor02 =ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot02",motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -487,7 +474,6 @@ public class ValidatorTest {
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
         Receiver motor02 =ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot02",motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
@@ -520,7 +506,6 @@ public class ValidatorTest {
         Receiver motor01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot01", motorConfig);
         Receiver motor02 =ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "mot02",motorConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
