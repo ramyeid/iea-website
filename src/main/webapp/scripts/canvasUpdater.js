@@ -24,16 +24,18 @@ function submitCircuit() {
         }
         else if (event.data.substring(0,3) === "end") {
             notificationSource.close();
-            notificationSource = NULL;
+            notificationSource = null;
         }
-        updateCircuit(event.data);
+        else {
+            updateCircuit(event.data);
+        }
     };
 
     notificationSource.onerror = function(event) {
         alert("Timeout");
     };
 
-    textLabel.innerHTML = 'Generators: ' + generatorsString + ' ||| Receivers: ' + receiversString + ' ||| Connections: ' + connectionsString;
+    textLabel.innerHTML = 'Generators: ' + generatorsAsString + ' ||| Receivers: ' + receiversAsString + ' ||| Connections: ' + connectionsAsString;
 }
 
 function updateCircuit(statusString) {
