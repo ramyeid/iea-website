@@ -1,22 +1,19 @@
 package com.iea.controller;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.iea.listener.AsynchronousScreenListenersNotifier;
 import com.iea.utils.CustomSseEmitter;
 import com.iea.utils.EmitterException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 @Controller
 @RequestMapping("/")
 public class Index {
-
-    static private CustomSseEmitter userSseEmitter = null;
 
     @RequestMapping
     public String index(Model model) {
@@ -28,19 +25,13 @@ public class Index {
         return "canvas";
     }
 
-    @GetMapping("/canvas/notifications")
-    public SseEmitter establishSseConnection() {
-        userSseEmitter = new CustomSseEmitter(600000L);
-        return userSseEmitter;
-    }
-
-    @PostMapping("/canvas/submit")
-    @ResponseBody
-    public void onSubmit(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections, Model model) {
+    @RequestMapping("/canvas/submit")
+    public SseEmitter onSubmit(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections, Model model) {
         //todo:
         // SSE EMITTER CAN SEND ON ERRORS: IN FUNCTIONS
         // MODEL.ADDATTRIBUTE("ONERROR").
         // ADD A BANNER THAT SHOWS THESE ERRORS.
+        CustomSseEmitter userSseEmitter = new CustomSseEmitter(Long.MAX_VALUE);
         CompletableFuture
                 .runAsync(() -> {
                     try {
@@ -50,5 +41,6 @@ public class Index {
                         model.addAttribute("ERROR", emitterException.getMessage());
                     }
                 });
+        return userSseEmitter;
     }
 }

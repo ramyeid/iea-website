@@ -72,7 +72,7 @@ function checkPin (object, clickX, clickY){
 function checkDipolePin(object, clickX) {
 
     if (clickX > object.width/2)
-        return "+";
+        return "%2B";
     else
         return "-";
 }
