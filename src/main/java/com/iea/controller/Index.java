@@ -1,6 +1,5 @@
 package com.iea.controller;
 
-import com.iea.Application;
 import com.iea.listener.AsynchronousScreenListenersNotifier;
 import com.iea.utils.CustomSseEmitter;
 import com.iea.utils.EmitterException;
@@ -12,13 +11,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.concurrent.CompletableFuture;
 
+
+//TODO ADD A BANNER WHEN ERROR ATTRIBUTE IS FILLED.
+//todo:
+// SSE EMITTER CAN SEND ON ERRORS: IN FUNCTIONS
+// MODEL.ADDATTRIBUTE("ONERROR").
+// ADD A BANNER THAT SHOWS THESE ERRORS.
 @Controller
 @RequestMapping("/")
 public class Index {
 
     private static final Logger LOGGER = LogManager.getLogger(Index.class);
+    private static final String PATH_TO_PYTHON_LIB = "src" + File.separator + "main" + File.separator + "resources" + File.separator + "python-lib";
 
     @RequestMapping
     public String index(Model model) {
@@ -32,20 +43,29 @@ public class Index {
 
     @RequestMapping("/canvas/submit")
     public SseEmitter onSubmit(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections, Model model) {
-        //todo:
-        // SSE EMITTER CAN SEND ON ERRORS: IN FUNCTIONS
-        // MODEL.ADDATTRIBUTE("ONERROR").
-        // ADD A BANNER THAT SHOWS THESE ERRORS.
         CustomSseEmitter userSseEmitter = new CustomSseEmitter(Long.MAX_VALUE);
-        CompletableFuture
-                .runAsync(() -> {
-                    try {
-                        AsynchronousScreenListenersNotifier.onSubmit(generators, receivers, connections, userSseEmitter);
-                    } catch (EmitterException emitterException) {
-                        LOGGER.error("Emitter Exception: ", emitterException);
-                        model.addAttribute("ERROR", emitterException.getMessage());
-                    }
-                });
+        CompletableFuture.runAsync(() -> onSubmit(generators, receivers, connections, model, userSseEmitter));
         return userSseEmitter;
     }
+
+    @RequestMapping("/canvas/savePythonFile")
+    public void onSavePython(@RequestParam("pythonCode") String pythonCode, Model model) {
+        try {
+            Files.write(Paths.get(PATH_TO_PYTHON_LIB + File.separator + "pythonCode.py"), pythonCode.getBytes(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            LOGGER.error("Error while saving the python file");
+            model.addAttribute("ERROR", e.getMessage());
+        }
+    }
+
+
+    private void onSubmit(String generators, String receivers, String connections, Model model, CustomSseEmitter userSseEmitter) {
+        try {
+            AsynchronousScreenListenersNotifier.onSubmit(generators, receivers, connections, userSseEmitter);
+        } catch (EmitterException emitterException) {
+            LOGGER.error("Emitter Exception: ", emitterException);
+            model.addAttribute("ERROR", emitterException.getMessage());
+        }
+    }
+
 }
