@@ -75,17 +75,12 @@ public class Pin {
             }
             i++;
         }
-        //this.connections.equals(pin.connections) &&
         return connectionsEquals &&
                 type == pin.type;
     }
 
     @Override
     public int hashCode() {
-//        return Objects.hash(connections, type);
-        /*if (this == null)
-            return 0;*/
-
         int result = 1;
 
         for (Tuple<Pin,Component> connection : this.connections){

@@ -1,31 +1,53 @@
 package com.iea.listener;
 
 import com.iea.circuit.Circuit;
-import com.iea.simulator.exception.NoGeneratorException;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import com.iea.serializer.exception.NoMatchingPinFoundException;
+import com.iea.utils.CustomSseEmitter;
+import com.iea.utils.EmitterException;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
+
+import static com.iea.serializer.Serializer.deSerialize;
+
 
 public class AsynchronousScreenListenersNotifier {
 
-    private static ConcurrentLinkedQueue<ScreenListener> screenListeners = new ConcurrentLinkedQueue();
-
+    private final static ConcurrentLinkedQueue<ScreenListener> screenListeners = new ConcurrentLinkedQueue<>();
 
     public static void addListener(ScreenListener screenListener) {
         screenListeners.add(screenListener);
     }
 
-    //TODO REFACTOR.
-    public static void onSubmit(Circuit circuit, SseEmitter emitter) {
-        screenListeners.parallelStream().forEach(t-> {
-            try {
-                t.onSubmit(circuit, emitter);
-            } catch (Exception e) {
-                //TODO LOG ERROR
-                e.printStackTrace();
-            }
-        });
+    public static void onSubmit(String generators, String receivers, String connections, CustomSseEmitter emitter) throws EmitterException {
+        try {
+            Circuit userCircuit = deSerialize(generators, receivers, connections);
+            screenListeners.forEach(t -> asyncRunInExceptionHandling(() -> t.onSubmit(userCircuit, emitter)));
+        } catch (NoMatchingPinFoundException e) {
+            emitter.send(e);
+        }
     }
+
+    private static void asyncRunInExceptionHandling(EmitterExceptionThrowingSupplier supplier) {
+        CompletableFuture.runAsync(supplier::get);
+    }
+
+    @FunctionalInterface
+    public interface EmitterExceptionThrowingSupplier extends Supplier<Void> {
+
+        @Override
+        default Void get() {
+            try {
+                getThrows();
+                return null;
+            } catch (final EmitterException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        void getThrows() throws EmitterException;
+    }
+
 }

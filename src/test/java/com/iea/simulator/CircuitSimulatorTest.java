@@ -1,5 +1,6 @@
 package com.iea.simulator;
 
+import com.google.common.collect.Maps;
 import com.iea.CircuitTemplates;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.receiver.DipoleReceiver;
@@ -12,10 +13,13 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hibernate.validator.internal.util.CollectionHelper.newHashMap;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CircuitSimulatorTest {
+
     @Test
     public void should_ensure_retrieveStatus_returns_OPTIMAL_for_RedLED_LOW_For_Green_LED() {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithOneRedLEDAndOneGreenLED();
@@ -27,11 +31,11 @@ public class CircuitSimulatorTest {
         for (Receiver receiver : validatedComponents) {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
+
         Map<Receiver, ReceiverStatus> expected = newHashMap();
         expected.put(validatedComponents.get(0), ReceiverStatus.OPTIMAL);
         expected.put(validatedComponents.get(1), ReceiverStatus.LOW);
-
-        assertEquals(expected, result);
+        assertThat(expected, equalTo(result));
     }
 
     @Test
@@ -43,11 +47,11 @@ public class CircuitSimulatorTest {
         for (Receiver receiver : validatedComponents) {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
+
         Map<Receiver, ReceiverStatus> expected = newHashMap();
         expected.put(validatedComponents.get(0), ReceiverStatus.OPTIMAL);
         expected.put(validatedComponents.get(1), ReceiverStatus.DAMAGED);
-        assertEquals(expected, result);
-
+        assertThat(expected, equalTo(result));
     }
 
     @Test
@@ -59,13 +63,12 @@ public class CircuitSimulatorTest {
         for (Receiver receiver : validatedComponents) {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
-        Map<Receiver, ReceiverStatus> expected = newHashMap();
 
+        Map<Receiver, ReceiverStatus> expected = newHashMap();
         expected.put(validatedComponents.get(0), ReceiverStatus.LOW);
         expected.put(validatedComponents.get(1), ReceiverStatus.LOW);
         expected.put(validatedComponents.get(2), ReceiverStatus.LOW);
-        assertEquals(expected, result);
-
+        assertThat(expected, equalTo(result));
     }
 
     @Test
@@ -78,11 +81,10 @@ public class CircuitSimulatorTest {
         for (Receiver receiver : validatedComponents) {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
+
         Map<Receiver, ReceiverStatus> expected = newHashMap();
         expected.put(validatedComponents.get(0), ReceiverStatus.DAMAGED);
-
-        assertEquals(expected, result);
-
+        assertThat(expected, equalTo(result));
     }
 
     @Test
@@ -96,12 +98,12 @@ public class CircuitSimulatorTest {
         for (Receiver receiver : validatedComponents) {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
+
         Map<Receiver, ReceiverStatus> expected = newHashMap();
         expected.put(validatedComponents.get(0), ReceiverStatus.LOW);
         expected.put(validatedComponents.get(1), ReceiverStatus.LOW);
         expected.put(validatedComponents.get(2), ReceiverStatus.LOW);
-
-        assertEquals(expected, result);
+        assertThat(expected, equalTo(result));
     }
 
 
@@ -115,11 +117,11 @@ public class CircuitSimulatorTest {
         for (Receiver receiver : validatedComponents) {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
+
         Map<Receiver, ReceiverStatus> expected = newHashMap();
         expected.put(validatedComponents.get(0), ReceiverStatus.LOW);
         expected.put(validatedComponents.get(1), ReceiverStatus.OPTIMAL);
-
-        assertEquals(expected, result);
+        assertThat(expected, equalTo(result));
     }
 
     @Test
@@ -132,12 +134,12 @@ public class CircuitSimulatorTest {
         for (Receiver receiver : validatedComponents) {
             result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
         }
+
         Map<Receiver, ReceiverStatus> expected = newHashMap();
         expected.put(validatedComponents.get(0), ReceiverStatus.OFF);
         expected.put(validatedComponents.get(1), ReceiverStatus.OFF);
         expected.put(validatedComponents.get(2), ReceiverStatus.OFF);
-
-        assertEquals(expected, result);
+        assertThat(expected, equalTo(result));
     }
 
     @Test(expected = NoGeneratorException.class)
@@ -145,7 +147,6 @@ public class CircuitSimulatorTest {
         ReceiverConfiguration ledConfig = new ReceiverConfiguration(1.2, 1, 4, 1);
         DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
 
-        Circuit.Builder.newBuilder();
         Circuit circuit = Circuit.Builder.newBuilder().addReceiver(led01).build();
         CircuitSimulator.simulate(circuit);
     }
