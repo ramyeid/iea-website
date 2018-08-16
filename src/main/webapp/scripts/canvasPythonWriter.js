@@ -1,6 +1,7 @@
 let showButton = document.getElementById("showPython");
 let hideButton = document.getElementById("hidePython");
 let submitButton = document.getElementById("submitPython");
+let fileName = "0";
 
 function showPythonCode() {
     document.getElementById("python").style.zIndex = 1001;
@@ -13,11 +14,13 @@ function hidePythonCode() {
 
 function submitCode(){
     pythonCodeString = document.getElementById("pythonCode").value;
+    if(fileName == "0")
+        fileName = (new Date()).getTime();
     hidePythonCode();
     $.ajax({
            type: 'POST',
            url: "/canvas/savePythonFile",
-           data: { pythonCode: pythonCodeString}
+           data: { pythonCode: pythonCodeString, pythonName: fileName}
         });
 }
 

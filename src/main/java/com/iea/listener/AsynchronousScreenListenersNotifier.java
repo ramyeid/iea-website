@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Supplier;
 
 import static com.iea.serializer.Serializer.deSerialize;
 
@@ -22,38 +21,38 @@ public class AsynchronousScreenListenersNotifier {
         screenListeners.add(screenListener);
     }
 
-    public static void onSubmit(String generators, String receivers, String connections, CustomSseEmitter emitter) throws EmitterException {
+    public static void onSubmit(String generators, String receivers, String connections, CustomSseEmitter emitter, String fileName) throws EmitterException {
         try {
-            List<CompletableFuture<Void>> listenersThreads = new ArrayList<>();
-
             Circuit userCircuit = deSerialize(generators, receivers, connections);
-            screenListeners.forEach(t -> listenersThreads.add(asyncRunInExceptionHandling(() -> t.onSubmit(userCircuit, emitter))));
 
-            listenersThreads.forEach(CompletableFuture::join);
+            List<CompletableFuture<Void>> threads = asyncRunInExceptionHandling((screenListener -> screenListener.onSubmit(userCircuit, fileName, emitter)));
+            threads.forEach(CompletableFuture::join);
+
             emitter.end();
         } catch (NoMatchingPinFoundException e) {
             emitter.send(e);
         }
     }
 
-    private static CompletableFuture<Void> asyncRunInExceptionHandling(EmitterExceptionThrowingSupplier supplier) {
-        return CompletableFuture.runAsync(supplier::get);
+    private static List<CompletableFuture<Void>> asyncRunInExceptionHandling(AsyncEmitterExceptionThrowingConsumer consumer) {
+        List<CompletableFuture<Void>> threads = new ArrayList<>();
+        screenListeners.forEach(t -> threads.add(consumer.asyncAccept(t)));
+        return threads;
     }
 
     @FunctionalInterface
-    private interface EmitterExceptionThrowingSupplier extends Supplier<Void> {
+    private interface AsyncEmitterExceptionThrowingConsumer {
 
-        @Override
-        default Void get() {
-            try {
-                getThrows();
-                return null;
-            } catch (final EmitterException e) {
-                throw new RuntimeException(e);
-            }
+        default CompletableFuture<Void> asyncAccept(ScreenListener screenListener) {
+            return CompletableFuture.runAsync(() -> {
+                try {
+                    doAccept(screenListener);
+                } catch (final EmitterException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
 
-        void getThrows() throws EmitterException;
+        void doAccept(ScreenListener screenListener) throws EmitterException;
     }
-
 }

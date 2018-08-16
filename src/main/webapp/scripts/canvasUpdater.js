@@ -16,7 +16,7 @@ function submitCircuit() {
     let receiversAsString = receiverList.toString();
     let generatorsAsString = generatorList.toString();
 
-    var notificationSource = new EventSource("/canvas/submit?generators="+generatorsAsString+"&receivers="+receiversAsString+"&connections="+connectionsAsString);
+    var notificationSource = new EventSource("/canvas/submit?generators="+generatorsAsString+"&receivers="+receiversAsString+"&connections="+connectionsAsString+"&fileName="+fileName);
 
     notificationSource.onmessage = function(event) {
         if (event.data.substring(0,5) === "Error") {

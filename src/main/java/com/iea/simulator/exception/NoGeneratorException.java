@@ -1,4 +1,4 @@
-package com.iea.simulator;
+package com.iea.simulator.exception;
 
 public class NoGeneratorException extends Exception {
 

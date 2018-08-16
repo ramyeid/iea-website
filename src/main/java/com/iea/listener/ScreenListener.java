@@ -6,5 +6,5 @@ import com.iea.utils.EmitterException;
 
 public interface ScreenListener {
 
-    void onSubmit(Circuit circuit, CustomSseEmitter emitter) throws EmitterException;
+    void onSubmit(Circuit circuit, String fileName, CustomSseEmitter emitter) throws EmitterException;
 }
