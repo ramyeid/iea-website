@@ -4,6 +4,7 @@ import com.iea.circuit.Circuit;
 import com.iea.circuit.receiver.config.Receiver;
 import com.iea.circuit.receiver.config.ReceiverConfiguration;
 import com.iea.circuit.receiver.config.ReceiverStatus;
+import com.iea.simulator.exception.NoGeneratorException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

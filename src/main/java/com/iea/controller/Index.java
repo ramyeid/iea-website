@@ -42,31 +42,38 @@ public class Index {
     }
 
     @RequestMapping("/canvas/submit")
-    public SseEmitter onSubmit(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections, Model model) {
-        CustomSseEmitter userSseEmitter = new CustomSseEmitter(Long.MAX_VALUE);
-        CompletableFuture.runAsync(() -> onSubmit(generators, receivers, connections, model, userSseEmitter));
+    public SseEmitter onSubmit(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections, @RequestParam("fileName") String fileName, Model model) {
+        CustomSseEmitter userSseEmitter = new CustomSseEmitter();
+        runAsync(() -> AsynchronousScreenListenersNotifier.onSubmit(generators, receivers, connections, userSseEmitter, fileName), model);
         return userSseEmitter;
     }
 
     @RequestMapping("/canvas/savePythonFile")
-    public void onSavePython(@RequestParam("pythonCode") String pythonCode, Model model) {
-        try {
-            String fileName = "pythonCode.py";
-            String pathToNewPythonFile = new StringJoiner(File.separator).add("src").add("main").add("resources").add("python-lib").add(fileName).toString();
-            Files.write(Paths.get(pathToNewPythonFile), pythonCode.getBytes(), StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            LOGGER.error("Error while saving the python file");
-            model.addAttribute("ERROR", e.getMessage());
-        }
+    public void onSavePython(@RequestParam("pythonCode") String pythonCode, @RequestParam("pythonName") String fileName, Model model) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                String pathToNewPythonFile = new StringJoiner(File.separator).add("src").add("main").add("resources").add("python-lib").add(fileName + ".py").toString();
+                Files.write(Paths.get(pathToNewPythonFile), pythonCode.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (IOException e) {
+                LOGGER.error("Error while saving the python file");
+                model.addAttribute("ERROR", e.getMessage());
+            }
+        });
     }
 
+    private void runAsync(SupplierWithEmitterException supplier, Model model) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                supplier.get();
+            } catch (EmitterException emitterException) {
+                LOGGER.error("Emitter Exception: ", emitterException);
+                model.addAttribute("ERROR", emitterException.getMessage());
+            }
+        });
+    }
 
-    private void onSubmit(String generators, String receivers, String connections, Model model, CustomSseEmitter userSseEmitter) {
-        try {
-            AsynchronousScreenListenersNotifier.onSubmit(generators, receivers, connections, userSseEmitter);
-        } catch (EmitterException emitterException) {
-            LOGGER.error("Emitter Exception: ", emitterException);
-            model.addAttribute("ERROR", emitterException.getMessage());
-        }
+    @FunctionalInterface
+    private interface SupplierWithEmitterException {
+        void get() throws EmitterException;
     }
 }
