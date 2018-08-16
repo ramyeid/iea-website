@@ -2,7 +2,7 @@ package com.iea.simulator;
 
 import com.iea.CircuitTemplates;
 import com.iea.circuit.Circuit;
-import com.iea.circuit.receiver.Receiver;
+import com.iea.circuit.receiver.config.Receiver;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,11 +13,11 @@ public class AmpCalculatorTest {
     @Test
     public void should_ensure_amp_is_calculated_correctly_in_series_circuit() {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithThreeBuzzers();
+
         List<Receiver> receiversInClosedCircuit = Validator.validate(circuit);
         double ampResult = AmpCalculator.calculateAmp(circuit.getGenerator(), receiversInClosedCircuit);
-        double ampExpected = 0.0138;
 
-        Assert.assertEquals(ampExpected, ampResult, 0.001);
+        Assert.assertEquals(0.0138, ampResult, 0.001);
     }
 
     /**
@@ -26,12 +26,13 @@ public class AmpCalculatorTest {
      * because the parallel use case is not present in this simulation
      */
     @Test
-    public void should_ensure_amp_is_calculated_correctly_parallel_circuit(){
-        Circuit circuit=CircuitTemplates.createSeriesCircuitWithTwoRedLEDsAndOneGreenLEDInParallel();
+    public void should_ensure_amp_is_calculated_correctly_parallel_circuit() {
+        Circuit circuit = CircuitTemplates.createSeriesCircuitWithTwoRedLEDsAndOneGreenLEDInParallel();
+
         List<Receiver> receiversInClosedCircuit = Validator.validate(circuit);
         double ampResult = AmpCalculator.calculateAmp(circuit.getGenerator(), receiversInClosedCircuit);
-        double ampExpected=0.016;
-        Assert.assertEquals(ampExpected,ampResult,0.001);
+
+        Assert.assertEquals(0.016, ampResult, 0.001);
     }
 
 

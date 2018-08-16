@@ -1,151 +1,113 @@
 package com.iea.simulator;
 
-import com.google.common.collect.Maps;
 import com.iea.CircuitTemplates;
 import com.iea.circuit.Circuit;
-import com.iea.circuit.receiver.DipoleReceiver;
-import com.iea.circuit.receiver.Receiver;
-import com.iea.circuit.receiver.ReceiverConfiguration;
-import com.iea.circuit.receiver.ReceiverStatus;
-import com.iea.simulator.exception.NoGeneratorException;
+import com.iea.circuit.receiver.config.Receiver;
+import com.iea.circuit.receiver.config.ReceiverConfiguration;
+import com.iea.circuit.receiver.config.ReceiverStatus;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
+import static com.iea.Utils.retrieveReceiverWithId;
+import static com.iea.circuit.receiver.ReceiverFactory.createReceiver;
+import static com.iea.circuit.receiver.config.ReceiverType.DIPOLE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hibernate.validator.internal.util.CollectionHelper.newHashMap;
-import static org.junit.Assert.assertTrue;
 
 public class CircuitSimulatorTest {
 
     @Test
-    public void should_ensure_retrieveStatus_returns_OPTIMAL_for_RedLED_LOW_For_Green_LED() {
+    public void should_ensure_retrieve_status_returns_OPTIMAL_for_RedLED_LOW_For_Green_LED() throws NoGeneratorException {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithOneRedLEDAndOneGreenLED();
 
-        List<Receiver> validatedComponents = Validator.validate(circuit);
-
-        double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
-        Map<Receiver, ReceiverStatus> result = newHashMap();
-        for (Receiver receiver : validatedComponents) {
-            result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
-        }
+        Map<Receiver, ReceiverStatus> actualResult = CircuitSimulator.simulate(circuit);
 
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(validatedComponents.get(0), ReceiverStatus.OPTIMAL);
-        expected.put(validatedComponents.get(1), ReceiverStatus.LOW);
-        assertThat(expected, equalTo(result));
+        expected.put(retrieveReceiverWithId("led01", circuit), ReceiverStatus.OPTIMAL);
+        expected.put(retrieveReceiverWithId("led02", circuit), ReceiverStatus.LOW);
+        assertThat(expected, equalTo(actualResult));
     }
 
     @Test
-    public void should_ensure_retrieveStatus_returns_DAMAGED_for_resistor_and_Optimal_for_RedLED() {
+    public void should_ensure_retrieveStatus_returns_DAMAGED_for_resistor_and_Optimal_for_RedLED() throws NoGeneratorException {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithOneRedLEDAndOneResistor();
-        List<Receiver> validatedComponents = Validator.validate(circuit);
-        double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
-        Map<Receiver, ReceiverStatus> result = newHashMap();
-        for (Receiver receiver : validatedComponents) {
-            result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
-        }
+
+        Map<Receiver, ReceiverStatus> actualResult = CircuitSimulator.simulate(circuit);
 
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(validatedComponents.get(0), ReceiverStatus.OPTIMAL);
-        expected.put(validatedComponents.get(1), ReceiverStatus.DAMAGED);
-        assertThat(expected, equalTo(result));
+        expected.put(retrieveReceiverWithId("res01", circuit), ReceiverStatus.DAMAGED);
+        expected.put(retrieveReceiverWithId("led01", circuit), ReceiverStatus.OPTIMAL);
+        assertThat(expected, equalTo(actualResult));
     }
 
     @Test
-    public void should_ensure_retrieveStatus_returns_LOW_for_all_LEDs() {
+    public void should_ensure_retrieveStatus_returns_LOW_for_all_LEDs() throws NoGeneratorException {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithTwoRedLEDsAndOneGreenLED();
-        List<Receiver> validatedComponents = Validator.validate(circuit);
-        double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
-        Map<Receiver, ReceiverStatus> result = newHashMap();
-        for (Receiver receiver : validatedComponents) {
-            result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
-        }
+
+        Map<Receiver, ReceiverStatus> actualResult = CircuitSimulator.simulate(circuit);
 
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(validatedComponents.get(0), ReceiverStatus.LOW);
-        expected.put(validatedComponents.get(1), ReceiverStatus.LOW);
-        expected.put(validatedComponents.get(2), ReceiverStatus.LOW);
-        assertThat(expected, equalTo(result));
+        expected.put(retrieveReceiverWithId("led01", circuit), ReceiverStatus.LOW);
+        expected.put(retrieveReceiverWithId("led02", circuit), ReceiverStatus.LOW);
+        expected.put(retrieveReceiverWithId("led03", circuit), ReceiverStatus.LOW);
+        assertThat(expected, equalTo(actualResult));
     }
 
     @Test
-    public void should_ensure_retrieveStatus_returns_DAMAGED_For_GreenLED() {
+    public void should_ensure_retrieveStatus_returns_DAMAGED_For_GreenLED() throws NoGeneratorException {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithOneGreenLED();
 
-        List<Receiver> validatedComponents = Validator.validate(circuit);
-        double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
-        Map<Receiver, ReceiverStatus> result = newHashMap();
-        for (Receiver receiver : validatedComponents) {
-            result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
-        }
+        Map<Receiver, ReceiverStatus> actualResult = CircuitSimulator.simulate(circuit);
 
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(validatedComponents.get(0), ReceiverStatus.DAMAGED);
-        assertThat(expected, equalTo(result));
+        expected.put(retrieveReceiverWithId("led01", circuit), ReceiverStatus.DAMAGED);
+        assertThat(expected, equalTo(actualResult));
     }
 
     @Test
-    public void should_ensure_retrieveStatus_returns_LOW_For_LED_And_Two_Resistors() {
+    public void should_ensure_retrieveStatus_returns_LOW_For_LED_And_Two_Resistors() throws NoGeneratorException {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithOneRedLEDAndTwoResistors();
-        List<Receiver> validatedComponents = Validator.validate(circuit);
 
-        double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
-        Map<Receiver, ReceiverStatus> result = newHashMap();
-
-        for (Receiver receiver : validatedComponents) {
-            result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
-        }
+        Map<Receiver, ReceiverStatus> actualResult = CircuitSimulator.simulate(circuit);
 
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(validatedComponents.get(0), ReceiverStatus.LOW);
-        expected.put(validatedComponents.get(1), ReceiverStatus.LOW);
-        expected.put(validatedComponents.get(2), ReceiverStatus.LOW);
-        assertThat(expected, equalTo(result));
+        expected.put(retrieveReceiverWithId("led01", circuit), ReceiverStatus.LOW);
+        expected.put(retrieveReceiverWithId("res01", circuit), ReceiverStatus.LOW);
+        expected.put(retrieveReceiverWithId("res02", circuit), ReceiverStatus.LOW);
+        assertThat(expected, equalTo(actualResult));
     }
 
 
     @Test
-    public void should_ensure_retrieveStatus_returns_LOW_For_Buzzer_OPTIMAL_For_LED() {
+    public void should_ensure_retrieveStatus_returns_LOW_For_Buzzer_OPTIMAL_For_LED() throws NoGeneratorException {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithOneRedLEDAndOneBuzzer();
-        List<Receiver> validatedComponents = Validator.validate(circuit);
 
-        double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
-        Map<Receiver, ReceiverStatus> result = newHashMap();
-        for (Receiver receiver : validatedComponents) {
-            result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
-        }
+        Map<Receiver, ReceiverStatus> actualResult = CircuitSimulator.simulate(circuit);
 
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(validatedComponents.get(0), ReceiverStatus.LOW);
-        expected.put(validatedComponents.get(1), ReceiverStatus.OPTIMAL);
-        assertThat(expected, equalTo(result));
+        expected.put(retrieveReceiverWithId("led01", circuit), ReceiverStatus.OPTIMAL);
+        expected.put(retrieveReceiverWithId("buz01", circuit), ReceiverStatus.LOW);
+        assertThat(expected, equalTo(actualResult));
     }
 
     @Test
-    public void should_ensure_retrieveStatus_returns_OFF_For_Three_Buzzers() {
+    public void should_ensure_retrieveStatus_returns_OFF_For_Three_Buzzers() throws NoGeneratorException {
         Circuit circuit = CircuitTemplates.createSeriesCircuitWithThreeBuzzers();
-        List<Receiver> validatedComponents = Validator.validate(circuit);
 
-        double amp = AmpCalculator.calculateAmp(circuit.getGenerator(), validatedComponents);
-        Map<Receiver, ReceiverStatus> result = newHashMap();
-        for (Receiver receiver : validatedComponents) {
-            result.put(receiver, CircuitSimulator.retrieveStatus(receiver, amp));
-        }
+        Map<Receiver, ReceiverStatus> actualResult = CircuitSimulator.simulate(circuit);
 
         Map<Receiver, ReceiverStatus> expected = newHashMap();
-        expected.put(validatedComponents.get(0), ReceiverStatus.OFF);
-        expected.put(validatedComponents.get(1), ReceiverStatus.OFF);
-        expected.put(validatedComponents.get(2), ReceiverStatus.OFF);
-        assertThat(expected, equalTo(result));
+        expected.put(retrieveReceiverWithId("buz01", circuit), ReceiverStatus.OFF);
+        expected.put(retrieveReceiverWithId("buz02", circuit), ReceiverStatus.OFF);
+        expected.put(retrieveReceiverWithId("buz03", circuit), ReceiverStatus.OFF);
+        assertThat(expected, equalTo(actualResult));
     }
 
     @Test(expected = NoGeneratorException.class)
     public void NoGeneratorFoundExceptionTest() throws NoGeneratorException {
-        ReceiverConfiguration ledConfig = new ReceiverConfiguration(1.2, 1, 4, 1);
-        DipoleReceiver led01 = new DipoleReceiver("led01", ledConfig);
+        Receiver led01 = createReceiver("led01", DIPOLE, new ReceiverConfiguration(1.2, 1, 4, 1));
 
         Circuit circuit = Circuit.Builder.newBuilder().addReceiver(led01).build();
         CircuitSimulator.simulate(circuit);

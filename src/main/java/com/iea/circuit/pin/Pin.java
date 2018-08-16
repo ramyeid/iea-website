@@ -8,22 +8,8 @@ import java.util.List;
 
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
-
+//TODO: List<Tuple<>> => Set<Tuple<>>
 public class Pin {
-
-    public enum Type {
-        POSITIVE("+"), NEGATIVE("-"), NEUTRAL("~");
-        String typeAsString;
-
-        Type(String type) {
-            this.typeAsString = type;
-        }
-
-        @Override
-        public String toString() {
-            return typeAsString;
-        }
-    }
 
     private final List<Tuple<Pin, Component>> connections;
     private final Type type;
@@ -83,11 +69,35 @@ public class Pin {
     public int hashCode() {
         int result = 1;
 
-        for (Tuple<Pin,Component> connection : this.connections){
+        for (Tuple<Pin, Component> connection : this.connections) {
             result = 31 * result + (connection.getFirst().type == null ? 0 : connection.getFirst().type.hashCode());
             result = 31 * result + (connection.getSecond().getId() == null ? 0 : connection.getSecond().getId().hashCode());
         }
         result = 31 * result + (this.getType() == null ? 0 : this.getType().hashCode());
         return result;
     }
+
+    //TODO pin to string => connections.
+    @Override
+    public String toString() {
+        return "Pin{" +
+//                "connections=" + connections +
+                "type=" + type +
+                '}';
+    }
+
+    public enum Type {
+        POSITIVE("+"), NEGATIVE("-"), NEUTRAL("~");
+        String typeAsString;
+
+        Type(String type) {
+            this.typeAsString = type;
+        }
+
+        @Override
+        public String toString() {
+            return typeAsString;
+        }
+    }
+
 }

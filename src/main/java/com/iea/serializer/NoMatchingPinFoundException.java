@@ -1,4 +1,4 @@
-package com.iea.serializer.exception;
+package com.iea.serializer;
 
 public class NoMatchingPinFoundException extends Exception {
 

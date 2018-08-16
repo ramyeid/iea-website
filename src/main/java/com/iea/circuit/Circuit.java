@@ -2,7 +2,7 @@ package com.iea.circuit;
 
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.pin.Pin;
-import com.iea.circuit.receiver.Receiver;
+import com.iea.circuit.receiver.config.Receiver;
 import com.iea.utils.Tuple;
 
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import java.util.Objects;
 
 import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
+//TODO LIST<RECEIVER> TO SET<RECEIVER>
 public class Circuit {
 
     private final Generator generator;
@@ -40,7 +41,7 @@ public class Circuit {
 
         if ((receivers == null && circuit.getReceivers() != null) || (receivers != null && circuit.getReceivers() == null)) {
             return false;
-        } else if (receivers != null && circuit.getReceivers() != null) { // <-------- ADDED THIS
+        } else if (receivers != null && circuit.getReceivers() != null) {
             if (receivers.size() != circuit.getReceivers().size()) return false;
             int i = 0;
             for (Receiver receiver : receivers) {
@@ -60,6 +61,13 @@ public class Circuit {
         return Objects.hash(generator, receivers);
     }
 
+    @Override
+    public String toString() {
+        return "Circuit{" +
+                "generator=" + generator +
+                ", receivers=" + receivers +
+                '}';
+    }
 
     public static class Builder {
         private Generator generator;

@@ -14,17 +14,17 @@ public class Generator extends Component {
 
     private final GeneratorConfiguration generatorConfiguration;
 
-    public Generator(String id, GeneratorConfiguration generatorConfiguration) {
+    Generator(String id, GeneratorConfiguration generatorConfiguration) {
         super(id, PinFactory.createPositivePin(), PinFactory.createNegativePin());
         this.generatorConfiguration = generatorConfiguration;
     }
 
     public Pin getPositivePin() {
-        return getFirstPin();
+        return firstPin;
     }
 
     public Pin getNegativePin() {
-        return getSecondPin();
+        return secondPin;
     }
 
     public GeneratorConfiguration getGeneratorConfiguration() {
@@ -46,8 +46,12 @@ public class Generator extends Component {
     }
 
     @Override
-    public int hashCode() {
-
-        return Objects.hash(super.hashCode(), generatorConfiguration);
+    public String toString() {
+        return "Generator{" +
+                "generatorConfiguration=" + generatorConfiguration +
+                ", id='" + id + '\'' +
+                ", firstPin=" + firstPin +
+                ", secondPin=" + secondPin +
+                '}';
     }
 }

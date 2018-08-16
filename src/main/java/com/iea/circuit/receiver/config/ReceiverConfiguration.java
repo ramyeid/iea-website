@@ -1,4 +1,4 @@
-package com.iea.circuit.receiver;
+package com.iea.circuit.receiver.config;
 
 import java.util.Objects;
 
@@ -46,5 +46,15 @@ public class ReceiverConfiguration {
     @Override
     public int hashCode() {
         return Objects.hash(optimalAmper, minVolt, maxVolt, resistance);
+    }
+
+    @Override
+    public String toString() {
+        return "ReceiverConfiguration{" +
+                "optimalAmper=" + optimalAmper +
+                ", minVolt=" + minVolt +
+                ", maxVolt=" + maxVolt +
+                ", resistance=" + resistance +
+                '}';
     }
 }

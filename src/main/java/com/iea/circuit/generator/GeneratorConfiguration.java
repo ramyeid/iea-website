@@ -32,7 +32,14 @@ public class GeneratorConfiguration {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(maxAmper, volt);
+    }
+
+    @Override
+    public String toString() {
+        return "GeneratorConfiguration{" +
+                "maxAmper=" + maxAmper +
+                ", volt=" + volt +
+                '}';
     }
 }

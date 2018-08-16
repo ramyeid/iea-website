@@ -3,7 +3,7 @@ package com.iea.simulator;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.Component;
 import com.iea.circuit.pin.Pin;
-import com.iea.circuit.receiver.Receiver;
+import com.iea.circuit.receiver.config.Receiver;
 import com.iea.utils.Tuple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

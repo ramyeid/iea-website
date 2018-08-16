@@ -3,24 +3,28 @@ package com.iea;
 import com.iea.circuit.Circuit;
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;
-import com.iea.circuit.receiver.*;
-import com.iea.simulator.AmpCalculator;
+import com.iea.circuit.receiver.ReceiverFactory;
+import com.iea.circuit.receiver.config.Receiver;
+import com.iea.circuit.receiver.config.ReceiverConfiguration;
+import com.iea.circuit.receiver.config.ReceiverType;
 import com.iea.utils.Tuple;
 
+import static com.iea.circuit.generator.GeneratorFactory.createGenerator;
+
 public class CircuitTemplates {
-    private static ReceiverConfiguration redLEDconfig = new ReceiverConfiguration(0.02, 1.3, 2.5, 100);
-    private static ReceiverConfiguration greenLEDconfig = new ReceiverConfiguration(0.03, 1.3, 3, 100);
-    private static ReceiverConfiguration motorConfig = new ReceiverConfiguration(1, 2, 6, 20);
-    private static ReceiverConfiguration resistorConfig = new ReceiverConfiguration(10, 1.5, 2, 150);
-    private static ReceiverConfiguration buzzerConfig = new ReceiverConfiguration(0.03, 2, 2.5, 120);
-    private static GeneratorConfiguration generatorConfig = new GeneratorConfiguration(1, 5);
+
+    private final static ReceiverConfiguration RED_LED_CONFIGURATION = new ReceiverConfiguration(0.02, 1.3, 2.5, 100);
+    private final static ReceiverConfiguration GREEN_LED_CONFIGURATION = new ReceiverConfiguration(0.03, 1.3, 3, 100);
+    private final static ReceiverConfiguration MOTOR_CONFIGURATION = new ReceiverConfiguration(1, 2, 6, 20);
+    private final static ReceiverConfiguration RESISTOR_CONFIGURATION = new ReceiverConfiguration(10, 1.5, 2, 150);
+    private final static ReceiverConfiguration BUZZER_CONFIGURATION = new ReceiverConfiguration(0.03, 2, 2.5, 120);
+    private final static GeneratorConfiguration GENERATOR_CONFIGURATION = new GeneratorConfiguration(1, 5);
 
 
     public static Circuit createSeriesCircuitWithOneRedLEDAndOneGreenLED() {
-
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
-        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", greenLEDconfig);
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver led01 = ReceiverFactory.createReceiver("led01", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver led02 = ReceiverFactory.createReceiver("led02", ReceiverType.DIPOLE, GREEN_LED_CONFIGURATION);
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
@@ -32,10 +36,10 @@ public class CircuitTemplates {
     }
 
     public static Circuit createSeriesCircuitWithOneRedLEDAndOneResistor() {
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver led01 = ReceiverFactory.createReceiver("led01", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver res01 = ReceiverFactory.createReceiver("res01", ReceiverType.DIPOLE, RESISTOR_CONFIGURATION);
 
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
-        Receiver res01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "res01", resistorConfig);
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(res01)
@@ -43,15 +47,13 @@ public class CircuitTemplates {
                 .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(res01.getFirstPin(), res01))
                 .connectComponents(new Tuple<>(res01.getSecondPin(), res01), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
-
     }
 
     public static Circuit createSeriesCircuitWithTwoRedLEDsAndOneGreenLED() {
-
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
-        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", redLEDconfig);
-        Receiver led03 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led03", greenLEDconfig);
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver led01 = ReceiverFactory.createReceiver("led01", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver led02 = ReceiverFactory.createReceiver("led02", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver led03 = ReceiverFactory.createReceiver("led03", ReceiverType.DIPOLE, GREEN_LED_CONFIGURATION);
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
@@ -62,13 +64,11 @@ public class CircuitTemplates {
                 .connectComponents(new Tuple<>(led03.getSecondPin(), led03), new Tuple<>(led02.getFirstPin(), led02))
                 .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
-
     }
 
     public static Circuit createSeriesCircuitWithOneGreenLED() {
-
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", greenLEDconfig);
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver led01 = ReceiverFactory.createReceiver("led01", ReceiverType.DIPOLE, GREEN_LED_CONFIGURATION);
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
@@ -78,11 +78,10 @@ public class CircuitTemplates {
     }
 
     public static Circuit createSeriesCircuitWithOneRedLEDAndTwoResistors() {
-
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
-        Receiver res01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "res01", resistorConfig);
-        Receiver res02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "res02", resistorConfig);
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver led01 = ReceiverFactory.createReceiver("led01", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver res01 = ReceiverFactory.createReceiver("res01", ReceiverType.DIPOLE, RESISTOR_CONFIGURATION);
+        Receiver res02 = ReceiverFactory.createReceiver("res02", ReceiverType.DIPOLE, RESISTOR_CONFIGURATION);
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
@@ -97,10 +96,9 @@ public class CircuitTemplates {
 
 
     public static Circuit createSeriesCircuitWithOneRedLEDAndOneBuzzer() {
-
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
-        Receiver buz01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz01", buzzerConfig);
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver led01 = ReceiverFactory.createReceiver("led01", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver buz01 = ReceiverFactory.createReceiver("buz01", ReceiverType.DIPOLE, BUZZER_CONFIGURATION);
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
@@ -112,10 +110,10 @@ public class CircuitTemplates {
     }
 
     public static Circuit createSeriesCircuitWithThreeBuzzers() {
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver buz01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz01", buzzerConfig);
-        Receiver buz02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz02", buzzerConfig);
-        Receiver buz03 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "buz03", buzzerConfig);
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver buz01 = ReceiverFactory.createReceiver("buz01", ReceiverType.DIPOLE, BUZZER_CONFIGURATION);
+        Receiver buz02 = ReceiverFactory.createReceiver("buz02", ReceiverType.DIPOLE, BUZZER_CONFIGURATION);
+        Receiver buz03 = ReceiverFactory.createReceiver("buz03", ReceiverType.DIPOLE, BUZZER_CONFIGURATION);
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(buz01)
@@ -130,23 +128,21 @@ public class CircuitTemplates {
 
 
     public static Circuit createSeriesCircuitWithTwoRedLEDsAndOneGreenLEDInParallel() {
-
-        Generator generator = new Generator("gen01", generatorConfig);
-        Receiver led01 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led01", redLEDconfig);
-        Receiver led02 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led02", redLEDconfig);
-        Receiver led03 = ReceiverFactory.createReceiver(ReceiverType.DIPOLE, "led03", greenLEDconfig);
+        Generator generator = createGenerator("gen01", GENERATOR_CONFIGURATION);
+        Receiver led01 = ReceiverFactory.createReceiver("led01", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver led02 = ReceiverFactory.createReceiver("led02", ReceiverType.DIPOLE, RED_LED_CONFIGURATION);
+        Receiver led03 = ReceiverFactory.createReceiver("led03", ReceiverType.DIPOLE, GREEN_LED_CONFIGURATION);
 
         return Circuit.Builder.newBuilder().setGenerator(generator)
                 .addReceiver(led01)
                 .addReceiver(led02)
                 .addReceiver(led03)
                 .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led01.getFirstPin(), led01))
-                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(led01.getSecondPin(), led01), new Tuple<>(generator.getSecondPin(), generator))
                 .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led02.getFirstPin(), led02))
-                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(led02.getSecondPin(), led02), new Tuple<>(generator.getSecondPin(), generator))
                 .connectComponents(new Tuple<>(generator.getFirstPin(), generator), new Tuple<>(led03.getFirstPin(), led03))
-                .connectComponents(new Tuple<>(led03.getSecondPin(), led03), new Tuple<>(generator.getSecondPin(),generator))
+                .connectComponents(new Tuple<>(led03.getSecondPin(), led03), new Tuple<>(generator.getSecondPin(), generator))
                 .build();
-
     }
 }

@@ -2,8 +2,8 @@ package com.iea.simulator;
 
 import com.iea.circuit.generator.Generator;
 import com.iea.circuit.generator.GeneratorConfiguration;
-import com.iea.circuit.receiver.Receiver;
-import com.iea.circuit.receiver.ReceiverConfiguration;
+import com.iea.circuit.receiver.config.Receiver;
+import com.iea.circuit.receiver.config.ReceiverConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

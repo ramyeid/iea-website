@@ -1,7 +1,7 @@
 package com.iea.listener;
 
 import com.iea.circuit.Circuit;
-import com.iea.serializer.exception.NoMatchingPinFoundException;
+import com.iea.serializer.NoMatchingPinFoundException;
 import com.iea.utils.CustomSseEmitter;
 import com.iea.utils.EmitterException;
 
@@ -41,7 +41,7 @@ public class AsynchronousScreenListenersNotifier {
     }
 
     @FunctionalInterface
-    public interface EmitterExceptionThrowingSupplier extends Supplier<Void> {
+    private interface EmitterExceptionThrowingSupplier extends Supplier<Void> {
 
         @Override
         default Void get() {

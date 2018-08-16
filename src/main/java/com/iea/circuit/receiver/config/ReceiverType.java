@@ -1,4 +1,4 @@
-package com.iea.circuit.receiver;
+package com.iea.circuit.receiver.config;
 
 public enum ReceiverType {
     DIPOLE, RESISTOR;
