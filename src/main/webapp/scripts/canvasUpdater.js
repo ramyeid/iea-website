@@ -12,11 +12,11 @@
 submitbutton.addEventListener('click',submitCircuit);
 
 function submitCircuit() {
-    let connectionsAsString = wiringList.toString();
+    let connectionsAsString = wiringList.join(";");
     let receiversAsString = receiverList.toString();
     let generatorsAsString = generatorList.toString();
 
-    var notificationSource = new EventSource("/canvas/submit?generators="+generatorsAsString+"&receivers="+receiversAsString+"&connections="+connectionsAsString+"&fileName="+fileName);
+    var notificationSource = new EventSource("/canvas/submit?type="+circuitType+"&generators="+generatorsAsString+"&receivers="+receiversAsString+"&connections="+connectionsAsString+"&fileName="+fileName);
 
     notificationSource.onmessage = function(event) {
         if (event.data.substring(0,5) === "Error") {

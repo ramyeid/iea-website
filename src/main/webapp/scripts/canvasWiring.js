@@ -2,42 +2,56 @@
  * functions here are called from the main javascript file
  * switchWiring switches the wiring mode on components
  * clearRelatedWiring clears all wiring related to a certain component
- * performWiring is called when a component is selected for wiring
+ * performComponentWiring is called when a component is selected for wiring
  * and links it to the last selected component (if there are any)
  */
+
+const RASPBERRY_PI_ID = "rpi";
+let wiringFromPi = false;
 
 function switchWiring() {
 	
 	if(wiring) {
 		wiring = false;
 		wiringTarget = null;
-		document.body.style.cursor = 'auto'; }
+		wiringFromPi = false;
+        document.body.style.cursor = 'auto'; }
 	else {
 		wiring = true;
 		wiringTarget = null;
-		document.body.style.cursor = 'nesw-resize';}
+        wiringFromPi = false;
+        document.body.style.cursor = 'nesw-resize';}
 		
 }
 
-function clearRelatedWiring(caller) {
-	
+function clearRelatedWiring(callerId) {
+
     for(let i=0; i<wiringList.length;i++)
     {
-      if (wiringList[i][0][0] === caller.id || wiringList[i][1][0] === caller.id)
-      {
-        wiringList[i].length = 0;
-      }
+        if (wiringList[i][0][0] === callerId || wiringList[i][1][0] === callerId)
+        {
+            wiringList[i].length = 0;
+        }
     }
 
     for(let i=wiringList.length-1; i>=0;i--)
     {
-      if (wiringList[i].length === 0)
-        wiringList.splice(i,1);
+        if (wiringList[i].length === 0)
+            wiringList.splice(i,1);
     }
-	
+
 }
 
-function performWiring(caller, shiftX, shiftY){
+function clearPiWiring() {
+
+    for (let generatorId of generatorList){
+        clearRelatedWiring(generatorId);
+    }
+
+    clearRelatedWiring("gnd");
+}
+
+function performComponentWiring(caller, shiftX, shiftY){
 	
 	    if (wiringTarget == null) {
 	        let pin = checkPin(caller, shiftX, shiftY);
@@ -54,12 +68,43 @@ function performWiring(caller, shiftX, shiftY){
 	        switchWiring();
 	        return true;
 	    }
-		
+
+}
+
+function performPiWiring(pin){
+
+    if (wiringTarget == null) {
+        wiringTarget = preparePiWiringTarget(pin);
+        wiringFromPi = true;
+        return false; }
+    else if (wiringFromPi) { //prevent pi to pi wiring
+        return false;
+    }
+    else {
+        let connection = [wiringTarget, preparePiWiringTarget(pin)];
+        wiringList.push(connection);
+        textLabel.innerHTML = "new connection:" + connection;
+        switchWiring();
+        return true;
+    }
+
+}
+
+function preparePiWiringTarget(raspberryPin) {
+    if (raspberryPin === "gnd") {
+        return [raspberryPin, "-"];
+    }
+    else {
+        if (generatorList.indexOf(raspberryPin) === -1)
+            generatorList.push(raspberryPin);
+
+        return [raspberryPin, "%2B"];
+    }
 }
 
 function checkPin (object, clickX, clickY){
 
-	switch(caller.dataset.conf)
+	switch(object.dataset.conf)
 	{
         case "1":
             return checkResistorPin(object, clickX);
@@ -68,6 +113,7 @@ function checkPin (object, clickX, clickY){
 	}
 
 }
+
 
 function checkDipolePin(object, clickX) {
 
@@ -83,3 +129,13 @@ function checkResistorPin(object, clickX) {
     else
         return "~2";
 }
+
+$("map[name=pimap] area").on('click', function () {
+
+    event.preventDefault();
+    if(wiring) {
+        let clickedPin = ($(this).attr('data-pin'));
+        performPiWiring(clickedPin);
+    }
+
+});
