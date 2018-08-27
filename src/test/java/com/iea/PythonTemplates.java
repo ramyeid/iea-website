@@ -158,4 +158,12 @@ public class PythonTemplates {
                 "Exception: Only numbers can be passed to sleep()" + endLine;
     }
 
+    public static String createPythonCodeWithInfiniteLoop(){
+        return "import sys\n" +
+                "sys.modules['time'] = __import__('time_mock')\n" +
+                "import time\n" +
+                "while True:\n" +
+                "\ttime.sleep(5)\n";
+    }
+
 }

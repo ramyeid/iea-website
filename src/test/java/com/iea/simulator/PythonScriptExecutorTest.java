@@ -132,7 +132,7 @@ public class PythonScriptExecutorTest {
     @Test
     public void should_verify_the_output_file_of_a_python_with_string_argument_to_sleep(){
         String pythonCode   = PythonTemplates.createPythonCodeWithStringArgToSleep();
-        String expected     = PythonTemplates.createPythonCodeWithTenSleepsResult();
+        String expected     = PythonTemplates.createPythonCodeWithStringArgToSleepException();
         try {
             Files.write(Paths.get(pathToNewPythonFile), pythonCode.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             PythonScriptExecutor.runPython(fileName);
@@ -142,5 +142,27 @@ public class PythonScriptExecutorTest {
         catch (IOException e) {assert(false);}
         catch (PythonScriptExecutorException e) {assert(false);}
     }
+
+    /*@Test(expected = PythonScriptExecutorException.class)
+    public void should_verify_the_exception_of_a_python_with_infinit_loop(){
+        String pythonCode   = PythonTemplates.createPythonCodeWithInfiniteLoop();
+        try {
+            Files.write(Paths.get(pathToNewPythonFile), pythonCode.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            PythonScriptExecutor.runPython(fileName);
+        }
+        catch (IOException e) {}
+        catch (PythonScriptExecutorException e) {}
+    }*/
+
+    /*@Test(expected = PythonScriptExecutorException.class)
+    public void should_verify_the_exception_of_a_python_with_import_sys(){
+        String pythonCode   = PythonTemplates.createPythonCodeWithInfiniteLoop();
+        try {
+            Files.write(Paths.get(pathToNewPythonFile), pythonCode.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            PythonScriptExecutor.testPythonSafety(fileName);
+        }
+        catch (IOException e) {}
+        catch (PythonScriptExecutorException e) {}
+    }*/
 
 }

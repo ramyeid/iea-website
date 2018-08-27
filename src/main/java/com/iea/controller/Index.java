@@ -1,6 +1,8 @@
 package com.iea.controller;
 
 import com.iea.listener.AsynchronousScreenListenersNotifier;
+import com.iea.simulator.PythonScriptExecutor;
+import com.iea.simulator.exception.PythonScriptExecutorException;
 import com.iea.utils.CustomSseEmitter;
 import com.iea.utils.EmitterException;
 import org.apache.logging.log4j.LogManager;
@@ -52,9 +54,10 @@ public class Index {
     public void onSavePython(@RequestParam("pythonCode") String pythonCode, @RequestParam("pythonName") String fileName, Model model) {
         CompletableFuture.runAsync(() -> {
             try {
+                PythonScriptExecutor.testPythonSafety(pythonCode);
                 String pathToNewPythonFile = new StringJoiner(File.separator).add("src").add("main").add("resources").add("python-lib").add(fileName + ".py").toString();
                 Files.write(Paths.get(pathToNewPythonFile), pythonCode.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            } catch (IOException e) {
+            } catch (IOException | PythonScriptExecutorException e) {
                 LOGGER.error("Error while saving the python file");
                 model.addAttribute("ERROR", e.getMessage());
             }
