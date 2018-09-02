@@ -1,8 +1,8 @@
 package com.iea.controller;
 
 import com.iea.listener.AsynchronousScreenListenersNotifier;
-import com.iea.utils.CustomSseEmitter;
-import com.iea.utils.EmitterException;
+import com.iea.utils.emitter.CustomSseEmitter;
+import com.iea.utils.emitter.EmitterException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -42,9 +42,9 @@ public class Index {
     }
 
     @RequestMapping("/canvas/submit")
-    public SseEmitter onSubmit(@RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections, @RequestParam("fileName") String fileName, Model model) {
+    public SseEmitter onSubmit(@RequestParam("type") String circuitType, @RequestParam("generators") String generators, @RequestParam("receivers") String receivers, @RequestParam("connections") String connections, @RequestParam("fileName") String fileName, Model model) {
         CustomSseEmitter userSseEmitter = new CustomSseEmitter();
-        runAsync(() -> AsynchronousScreenListenersNotifier.onSubmit(generators, receivers, connections, userSseEmitter, fileName), model);
+        runAsync(() -> AsynchronousScreenListenersNotifier.onSubmit(circuitType, generators, receivers, connections, userSseEmitter, fileName), model);
         return userSseEmitter;
     }
 

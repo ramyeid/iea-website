@@ -6,24 +6,36 @@ let wiring = false;
 let wiringTarget = null;
 let generatorInstantiated = false;
 let textLabel =  document.getElementById('textLabel');
-let components = document.getElementById("components");
+let components = document.getElementById('components');
+let raspberry = document.getElementById('rpi');
+raspberry.style.visibility = "hidden";
+
+const RPI_CIRCUIT_TOKEN = "RPI";
+const DEFAULT_CIRCUIT_TOKEN = "DEFAULT";
+let circuitType = DEFAULT_CIRCUIT_TOKEN;
 
 //bind click event to adding components from "components" div in .JSP
 components.addEventListener("click", function (event){
 
-	caller = event.target;
+	let caller = event.target;
 	if (caller.id === "components" || caller.id === "") return; //ignore clicking the div's background
     if (caller.dataset.type === "0"){
 		switchWiring();
 		return;
 	}
 
-
 	if (caller.dataset.type === "1" && !generatorInstantiated){
 	    let newComponent = duplicateComponent(caller);
         generatorList.push(newComponent.id);
         generatorInstantiated = true;
+        circuitType = DEFAULT_CIRCUIT_TOKEN;
 	}
+
+	else if (caller.dataset.type === "3" && !generatorInstantiated) {
+        raspberry.style.visibility = "visible";
+        generatorInstantiated = true;
+        circuitType = RPI_CIRCUIT_TOKEN;
+    }
 
     else if (caller.dataset.type === "2"){
         let newComponent = duplicateComponent(caller);
@@ -55,8 +67,8 @@ function duplicateComponent(caller){
 function deleteComponent(event) {
 	event.preventDefault(); //prevents default context menu from opening
     if (wiring) return; //prevent deletion if currently wiring
-    caller = event.target;
-    clearRelatedWiring(caller);
+    let caller = event.target;
+    clearRelatedWiring(caller.id);
 
     if (caller.dataset.type === "1") {
         generatorList.splice(generatorList.indexOf(caller.id),1);
@@ -69,21 +81,20 @@ function deleteComponent(event) {
 	event.target.remove(); //deletes component
 }
 
-
 //function used to move component on drag
 function mouseDownComponent(event) {
 
   if (event.which !== 1) //if not left click, ignore
 	return false;
 
-  caller = event.target;
+  let caller = event.target;
 
   //record initial click offset from object edge for smoother dragging
   let shiftX = event.clientX - caller.getBoundingClientRect().left;
   let shiftY = event.clientY - caller.getBoundingClientRect().top;
 
   if (wiring){
-	  performWiring(caller, shiftX, shiftY);
+	  performComponentWiring(caller, shiftX, shiftY);
 	  return;}
 
   caller.style.position = 'absolute';
@@ -112,3 +123,12 @@ function mouseDownComponent(event) {
     caller.onmouseup = null; //delete mouse up event listener
   };
 }
+
+raspberry.addEventListener("contextmenu", function (event) {
+    //hide the raspberry pi and delete all the related wiring
+    event.preventDefault();
+    raspberry.style.visibility = "hidden";
+    generatorInstantiated = false;
+    clearPiWiring();
+    generatorList.length = 0;
+});
